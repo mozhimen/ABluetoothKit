@@ -1,8 +1,6 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.commons;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.os.Looper;
+import com.mozhimen.bluetoothk.commons.BluetoothConnectCallback;
 
 /**
  * Created by lee on 6/3/16.

@@ -1,21 +1,21 @@
 package com.mozhimen.bluetoothk;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.mozhimen.bluetoothk.commons.BluetoothConnectCallback;
+import com.mozhimen.bluetoothk.commons.BluetoothConnectWithDataManageCallback;
+import com.mozhimen.bluetoothk.commons.BluetoothMacCallback;
 import com.mozhimen.bluetoothk.exceptions.BluetoothNotSupportException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.IllegalFormatCodePointException;
 import java.util.Set;
 
 /**
@@ -34,7 +34,7 @@ public class MedBluetooth {
     private static HashMap<String, BluetoothConnectCallback> mBluetoothConnectCallbackMap = new HashMap<>();
     private static HashMap<String, BluetoothReadDataThread> mBluetoothReadDataThreadMap = new HashMap<>();
     private static HashMap<String, String> mMacToKey = new HashMap<>();
-    protected static Handler mHandler;
+    public static Handler mHandler;
     private static Context mContext;
     private static HashMap<String, ConnectBluetoothThread> mBluetoothMap = new HashMap<>(); //防止同一mac地址多次连接。
     private static HashMap<String, BluetoothSocket> mSocketMap = new HashMap<>();

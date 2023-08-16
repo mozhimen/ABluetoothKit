@@ -1,8 +1,10 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.commons;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Looper;
+
+import com.mozhimen.bluetoothk.MedBluetooth;
 
 /**
  * Created by lee on 5/25/16.

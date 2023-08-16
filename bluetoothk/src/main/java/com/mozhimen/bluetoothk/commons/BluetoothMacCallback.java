@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.commons;
 
 public abstract class BluetoothMacCallback {
 

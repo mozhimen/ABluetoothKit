@@ -1,8 +1,9 @@
 package com.mozhimen.bluetoothk;
 
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.util.Log;
+
+import com.mozhimen.bluetoothk.commons.BluetoothConnectWithDataManageCallback;
 
 import java.io.IOException;
 import java.io.InputStream;
