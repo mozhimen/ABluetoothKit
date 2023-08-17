@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.helpers;
 
 import android.app.Activity;
 import android.content.Context;

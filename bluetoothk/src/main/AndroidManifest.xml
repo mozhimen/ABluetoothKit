@@ -13,16 +13,16 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".OpenBluetoothActivity"
+            android:name=".temps.OpenBluetoothActivity"
             android:theme="@style/Transparent" />
         <activity
-            android:name=".ChooseBluetoothActivity"
+            android:name=".temps.ChooseBluetoothActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ConnectBluetoothActivity"
+            android:name=".temps.ConnectBluetoothActivity"
             android:theme="@style/Transparent" />
 
-        <receiver android:name=".BluetoothStateChangeReceiver">
+        <receiver android:name=".helpers.BluetoothKStateChangeReceiver">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
             </intent-filter>

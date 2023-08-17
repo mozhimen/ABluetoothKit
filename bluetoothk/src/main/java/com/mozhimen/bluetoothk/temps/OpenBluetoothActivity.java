@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.temps;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.Toast;
+
+import com.mozhimen.bluetoothk.helpers.BluetoothScreenManger;
+import com.mozhimen.bluetoothk.R;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

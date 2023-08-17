@@ -1,10 +1,15 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.helpers;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+
+import com.mozhimen.bluetoothk.MedBluetooth;
+import com.mozhimen.bluetoothk.commons.BluetoothKSocketConnectedCallback;
+import com.mozhimen.bluetoothk.temps.OpenBluetoothActivity;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -18,10 +23,11 @@ public class ConnectBluetoothThread extends Thread {
     private final BluetoothSocket mSocket;
     private final BluetoothDevice mDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    private SocketConnectedCallback mSocketConnectedCallback;
+    private BluetoothKSocketConnectedCallback mSocketConnectedCallback;
     private Context mContext;
 
-    private ConnectBluetoothThread(Context context, BluetoothDevice device, SocketConnectedCallback socketConnectedCallback) {
+    @SuppressLint("MissingPermission")
+    private ConnectBluetoothThread(Context context, BluetoothDevice device, BluetoothKSocketConnectedCallback socketConnectedCallback) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothSocket tmp = null;
         mDevice = device;
@@ -35,7 +41,8 @@ public class ConnectBluetoothThread extends Thread {
         mSocketConnectedCallback = socketConnectedCallback;
     }
 
-    private ConnectBluetoothThread(Context context, String address, SocketConnectedCallback socketConnectedCallback) {
+    @SuppressLint("MissingPermission")
+    private ConnectBluetoothThread(Context context, String address, BluetoothKSocketConnectedCallback socketConnectedCallback) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mDevice = mBluetoothAdapter.getRemoteDevice(address);
         BluetoothSocket tmp = null;
@@ -49,10 +56,11 @@ public class ConnectBluetoothThread extends Thread {
         mSocketConnectedCallback = socketConnectedCallback;
     }
 
+    @SuppressLint("MissingPermission")
     public void run() {
 
         if (!mBluetoothAdapter.isEnabled()) {
-            Intent intent = new Intent(mContext,OpenBluetoothActivity.class);
+            Intent intent = new Intent(mContext, OpenBluetoothActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             //Todo 连接成功后回调
@@ -91,7 +99,7 @@ public class ConnectBluetoothThread extends Thread {
     }
 
 
-    public static void startUniqueConnectThread(Context context, String address, SocketConnectedCallback socketConnectedCallback) {
+    public static void startUniqueConnectThread(Context context, String address, BluetoothKSocketConnectedCallback socketConnectedCallback) {
 //        ConnectBluetoothThread thread = MedBluetooth.getConnectThreadByMac(address);
 //        if (thread == null || thread.getState() == State.TERMINATED) {
 //            MedBluetooth.addConnectThreadToMap(address, new ConnectBluetoothThread(context, address, socketConnectedCallback));

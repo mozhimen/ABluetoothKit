@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.temps;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -18,6 +18,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.mozhimen.bluetoothk.cons.CBluetoothKCons;
+import com.mozhimen.bluetoothk.helpers.BluetoothScreenManger;
+import com.mozhimen.bluetoothk.MedBluetooth;
+import com.mozhimen.bluetoothk.R;
+import com.mozhimen.bluetoothk.helpers.DeviceListAdapter;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -52,7 +58,7 @@ public class ChooseBluetoothActivity extends AppCompatActivity {
                     Log.e("TAG", "onReceive: "+device.getName() + "\n" + device.getAddress());
                     mAdapter.notifyDataSetChanged();
                 }
-            } else if (MedBluetooth.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY.equals(action)) {
+            } else if (CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY.equals(action)) {
                 mBluetoothAdapter.cancelDiscovery();
                 mTvRefresh.setText("重新搜索");
                 state = 2;
@@ -79,7 +85,7 @@ public class ChooseBluetoothActivity extends AppCompatActivity {
         mKey = getIntent().getStringExtra("callback_key");
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(MedBluetooth.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY);
+        filter.addAction(CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY);
         registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -143,6 +149,7 @@ public class ChooseBluetoothActivity extends AppCompatActivity {
 
         mTvRefresh = (AppCompatTextView) findViewById(R.id.tv_refresh);
         mTvRefresh.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
 

@@ -1,5 +1,6 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.helpers;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mozhimen.bluetoothk.MedBluetooth;
+import com.mozhimen.bluetoothk.R;
+import com.mozhimen.bluetoothk.cons.CBluetoothKCons;
+
 import java.util.ArrayList;
 
 /**
@@ -16,11 +21,11 @@ import java.util.ArrayList;
  */
 public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<String> mPairedDeviceList;
-    private ArrayList<String> mFoundDeviceList;
-    private BluetoothAdapter mBluetoothAdapter;
-    private Context mContext;
-    private String mKey;
+    private final ArrayList<String> mPairedDeviceList;
+    private final ArrayList<String> mFoundDeviceList;
+    private final BluetoothAdapter mBluetoothAdapter;
+    private final Context mContext;
+    private final String mKey;
 
     public DeviceListAdapter(Context context, ArrayList<String> pairedDeviceList, ArrayList<String> foundDeviceList, BluetoothAdapter bluetoothAdapter, String key) {
         mFoundDeviceList = foundDeviceList;
@@ -100,10 +105,11 @@ public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mTvBleMac = (AppCompatTextView) itemView.findViewById(R.id.tv_ble_mac);
             mTvBleName = (AppCompatTextView) itemView.findViewById(R.id.tv_ble_name);
             itemView.findViewById(R.id.ll_content).setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("MissingPermission")
                 @Override
                 public void onClick(View v) {
                     mBluetoothAdapter.cancelDiscovery();
-                    v.getContext().sendBroadcast(new Intent(MedBluetooth.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY));
+                    v.getContext().sendBroadcast(new Intent(CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY));
                     int position = getLayoutPosition();
                     String s = "";
                     if (position < mPairedDeviceList.size()) {

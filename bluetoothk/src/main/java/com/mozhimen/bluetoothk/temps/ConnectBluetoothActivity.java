@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk;
+package com.mozhimen.bluetoothk.temps;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.mozhimen.bluetoothk.helpers.BluetoothScreenManger;
+import com.mozhimen.bluetoothk.R;
 
 public class ConnectBluetoothActivity extends AppCompatActivity {
 
