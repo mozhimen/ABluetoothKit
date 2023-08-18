@@ -10,4 +10,4 @@ import java.io.IOException
  * @Date 2023/8/17 11:00
  * @Version 1.0
  */
-class BluetoothKConnectFailedException(msg: String?) : IOException(msg)
+class BluetoothKConnectException(msg: String?) : IOException(msg)

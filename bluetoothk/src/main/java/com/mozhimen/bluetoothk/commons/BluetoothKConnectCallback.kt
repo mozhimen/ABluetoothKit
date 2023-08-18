@@ -3,7 +3,7 @@ package com.mozhimen.bluetoothk.commons
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Looper
-import com.mozhimen.bluetoothk.MedBluetooth
+import com.mozhimen.bluetoothk.BluetoothK
 
 
 /**
@@ -29,7 +29,7 @@ abstract class BluetoothKConnectCallback {
 
     open fun internalConnected(socket: BluetoothSocket?, device: BluetoothDevice?, e: Exception?) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            if (!MedBluetooth.mHandler.post { connected(socket, device, e) }) {
+            if (BluetoothK.instance._handler?.post { connected(socket, device, e) } != true) {
             }
         } else {
             connected(socket, device, e)
@@ -38,7 +38,7 @@ abstract class BluetoothKConnectCallback {
 
     open fun internalDisconnected() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            if (!MedBluetooth.mHandler.post { disconnected() }) {
+            if (BluetoothK.instance._handler?.post { disconnected() } != true) {
             }
         } else {
             disconnected()

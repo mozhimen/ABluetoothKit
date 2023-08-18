@@ -4,13 +4,11 @@ import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
-import android.util.Log
+import com.mozhimen.basick.elemk.android.bluetooth.CBluetoothDevice
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.utilk.android.util.dt
 import com.mozhimen.basick.utilk.android.util.wt
-import com.mozhimen.bluetoothk.MedBluetooth
-import com.mozhimen.bluetoothk.cons.CBluetoothDevice
-
+import com.mozhimen.bluetoothk.BluetoothK
 
 /**
  * @ClassName BluetoothKStateChangeReceiver
@@ -32,7 +30,7 @@ class BluetoothKStateChangeReceiver : BaseBroadcastReceiver() {
             }
             val mac = device.address
             "onReceive mac = $mac".dt(TAG)
-            MedBluetooth.executeBluetoothDisconnectedCallback(mac)
+            BluetoothK.instance.executeBluetoothDisconnectedCallback(mac)
         }
     }
 }

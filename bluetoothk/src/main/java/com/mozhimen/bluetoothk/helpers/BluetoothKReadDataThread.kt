@@ -3,7 +3,7 @@ package com.mozhimen.bluetoothk.helpers
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import com.mozhimen.basick.utilk.bases.IUtilK
-import com.mozhimen.bluetoothk.MedBluetooth
+import com.mozhimen.bluetoothk.BluetoothK
 import com.mozhimen.bluetoothk.commons.BluetoothKConnectWithDataManageCallback
 import java.io.IOException
 import java.io.InputStream
@@ -53,7 +53,7 @@ class BluetoothKReadDataThread : Thread, IUtilK {
                     //                    mConnectCallback.internalDataMange(bytes, buffer, new Exception("处理数据出错！"));
                     if (!_bluetoothSocket!!.isConnected) {
                         _inputStream!!.close()
-                        MedBluetooth.executeBluetoothDisconnectedCallback(_bluetoothSocket!!.remoteDevice.address)
+                        BluetoothK.instance.executeBluetoothDisconnectedCallback(_bluetoothSocket!!.remoteDevice.address)
                     }
                 }
             }
