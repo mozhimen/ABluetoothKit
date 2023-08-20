@@ -8,5 +8,4 @@ package com.mozhimen.bluetoothk.exceptions
  * @Date 2023/8/20 11:50
  * @Version 1.0
  */
-
-class BluetoothKSupportException(msg: String?) : Exception(msg)
+class BluetoothKUnSupportException(msg: String?) : Exception(msg)
