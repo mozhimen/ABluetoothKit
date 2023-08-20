@@ -1,13 +1,14 @@
 package com.mozhimen.bluetoothk.temps
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.mozhimen.basick.stackk.monitor.StackMonitor
+import com.mozhimen.basick.utilk.android.content.startContext
 import com.mozhimen.bluetoothk.R
+import com.mozhimen.bluetoothk.cons.CBluetoothKCons
 
 /**
  * @ClassName BluetoothKConnectActivity
@@ -17,31 +18,28 @@ import com.mozhimen.bluetoothk.R
  * @Version 1.0
  */
 class BluetoothKConnectActivity : AppCompatActivity() {
-    private var mProgressBar: ProgressBar? = null
-    private var mContext: Context? = null
-    private var mKey: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connect_bluetooth)
-        val actionBar = supportActionBar
-        actionBar?.hide()
+        supportActionBar?.hide()
         StackMonitor.instance.pushActivity(this)
-        mContext = this
-        initView()
-        val mac = intent.getStringExtra("bluetooth_mac_address")
-        mKey = intent.getStringExtra("callback_key")
-        if (mac == null || mac == "") {
-            val intent = Intent(this, BluetoothKChooseActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
+
+        val mProgressBar = findViewById<View>(R.id.progress_bar) as? ProgressBar?
+        mProgressBar?.isIndeterminate = true
+
+        intent.getStringExtra(CBluetoothKCons.EXTRA_BLUETOOTH_MAC)?.let {
+            if (it.isNotEmpty()) {
+                startContext<BluetoothKChooseActivity>()
+                StackMonitor.instance.popActivity(this)
+            }
         }
         mProgressBar?.visibility = View.GONE
+
 //        Toast.makeText(mContext, "连接成功", Toast.LENGTH_SHORT).show();
 //        MedBluetooth.executeBluetoothConnectCallback(mac, mKey);
 //        BluetoothScreenManger.getScreenManger().popAllActivity();
-
+//
 //        ConnectBluetoothThread.startUniqueConnectThread(this, mac, new SocketConnectedCallback() {
 //            @Override
 //            public void done(BluetoothSocket socket, BluetoothDevice device, IOException e) {
@@ -57,12 +55,5 @@ class BluetoothKConnectActivity : AppCompatActivity() {
 //                }
 //            }
 //        });
-    }
-
-    private fun initView() {
-        mProgressBar = findViewById<View>(R.id.progress_bar) as ProgressBar
-        if (mProgressBar != null) {
-            mProgressBar!!.isIndeterminate = true
-        }
     }
 }

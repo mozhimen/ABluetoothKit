@@ -21,5 +21,5 @@ abstract class BluetoothKConnectWithDataManageCallback : BluetoothKConnectCallba
     //    public void internalDataMange(final int bytes, final byte[] buffer, final Exception e) {
     //        this.dataMange(bytes, buffer, e);
     //    }
-    abstract fun getMac(BtName: String?, mac: String?)
+    abstract fun getMac(name: String?, mac: String?)
 }

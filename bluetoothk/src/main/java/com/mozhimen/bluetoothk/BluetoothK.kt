@@ -54,6 +54,8 @@ class BluetoothK : IUtilK {
     private val _macToKeyMap = HashMap<String, String>()
     private val _bluetoothSocketMap = HashMap<String, BluetoothSocket>()
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * @param context                      上下文
      * @param mac                          如果以前有保存蓝牙mac地址，则可以直接输入
@@ -63,7 +65,7 @@ class BluetoothK : IUtilK {
     fun getBTMac(context: Context, mac: String, showConnectBluetoothActivity: Boolean, bluetoothKMacCallback: BluetoothKMacCallback) {
         _context = context
         context.startContext<BluetoothKChooseActivity>() {
-            putExtra("callback_key", "1-*1")
+            putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, "1-*1")
         }
     }
 
@@ -112,32 +114,29 @@ class BluetoothK : IUtilK {
         //todo mac 为空
         Log.i("BluetoothStateChange", "final mac = $mac")
         Log.i("BluetoothStateChange", "final key = " + _macToKeyMap[mac])
-        _bluetoothKConnectCallbackMap.set(key, callback)
+        _bluetoothKConnectCallbackMap[key] = callback
         ("connectBluetooth: after put in map callback is BluetoothKConnectWithDataManageCallback == " + (_bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) + " callbackid = " + _bluetoothKConnectCallbackMap[key].toString()).dt(
             TAG
         )
 
         _bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (_bluetoothAdapter == null) {
+        if (_bluetoothAdapter == null)
             executeBluetoothConnectCallback(null, null, BluetoothKSupportException("Can't get default bluetooth adapter"), key)
-        }
 
         if (!_bluetoothAdapter!!.isEnabled) {
             context.startContext<BluetoothKOpenActivity>() {
-                putExtra("callback_key", key)
+                putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, key)
             }
             return
         }
         if (mac.isEmpty()) {
             context.startContext<BluetoothKChooseActivity>() {
-                putExtra("callback_key", key)
+                putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, key)
             }
-            //            intent.putExtra("activity",activity);
-            //            activity.startActivityForResult(intent,125);
         } else if (isShowConnectBluetoothActivity) {
             context.startContext<BluetoothKConnectActivity>() {
-                putExtra("callback_key", key)
-                putExtra("bluetooth_mac_address", mac)
+                putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, key)
+                putExtra(CBluetoothKCons.EXTRA_MAC_ADDRESS, mac)
             }
         } else if (!isShowConnectBluetoothActivity) {
             startUniqueConnectThread(context, mac, object : BluetoothKSocketConnectedCallback() {
@@ -198,6 +197,8 @@ class BluetoothK : IUtilK {
             _bluetoothKConnectCallbackMap.remove(key)
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected fun executeBluetoothConnectCallback(socket: BluetoothSocket?, device: BluetoothDevice?, e: Exception?, key: String) {
         if (_macToKeyMap[device!!.address] == null) {

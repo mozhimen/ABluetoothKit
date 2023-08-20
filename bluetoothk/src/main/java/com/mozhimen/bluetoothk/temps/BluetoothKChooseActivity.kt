@@ -8,22 +8,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mozhimen.basick.elemk.android.bluetooth.CBluetoothDevice
+import com.mozhimen.basick.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.basick.stackk.monitor.StackMonitor
+import com.mozhimen.basick.utilk.android.content.startActivityForResult
+import com.mozhimen.basick.utilk.android.widget.showToast
 import com.mozhimen.bluetoothk.R
 import com.mozhimen.bluetoothk.cons.CBluetoothKCons
+import com.mozhimen.bluetoothk.cons.EBluetoothKState
 import com.mozhimen.bluetoothk.helpers.BluetoothKDevicesAdapter
-
 
 /**
  * @ClassName BluetoothKChooseActivity
@@ -33,13 +34,7 @@ import com.mozhimen.bluetoothk.helpers.BluetoothKDevicesAdapter
  * @Version 1.0
  */
 class BluetoothKChooseActivity : AppCompatActivity() {
-    companion object {
-        private const val REQUEST_ENABLE_BT = 0x01
-    }
 
-    //////////////////////////////////////////////////////////////////
-
-    private var mContext: Context? = null
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private var mRecyclerView: RecyclerView? = null
     private var _bluetoothKDevicesAdapter: BluetoothKDevicesAdapter? = null
@@ -47,7 +42,7 @@ class BluetoothKChooseActivity : AppCompatActivity() {
     private val mPairedDeviceList = ArrayList<String>()
     private val mFoundDeviceList = ArrayList<String>() //0:开始搜索
 
-    private var state = 0
+    private var _bluetoothKState = EBluetoothKState.IDLE
     private var mKey: String? = ""
 
     // Create a BroadcastReceiver for ACTION_FOUND
@@ -55,21 +50,23 @@ class BluetoothKChooseActivity : AppCompatActivity() {
     private val mReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
-            // When discovery finds a device
-            if (CBluetoothDevice.ACTION_FOUND == action) {
-                // Get the BluetoothDevice object from the Intent
-                val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                val s = device!!.name + "\n" + device.address
-                if (!mFoundDeviceList.contains(s) && !TextUtils.isEmpty(device.name)) {
-                    // Add the name and address to an array adapter to show in a ListView
-                    mFoundDeviceList.add(device.name + "\n" + device.address)
-                    Log.e("TAG", "onReceive: name ${device.name} address ${device.address}")
-                    _bluetoothKDevicesAdapter!!.notifyDataSetChanged()
+            when (action) {
+                CBluetoothDevice.ACTION_FOUND -> {// When discovery finds a device
+                    val device = intent.getParcelableExtra<BluetoothDevice>(CBluetoothDevice.EXTRA_DEVICE)// Get the BluetoothDevice object from the Intent
+                    val s = device!!.name + "\n" + device.address
+                    if (!mFoundDeviceList.contains(s) && device.name.isNotEmpty()) {
+                        // Add the name and address to an array adapter to show in a ListView
+                        mFoundDeviceList.add(device.name + "\n" + device.address)
+                        Log.e("TAG", "onReceive: name ${device.name} address ${device.address}")
+                        _bluetoothKDevicesAdapter!!.notifyDataSetChanged()
+                    }
                 }
-            } else if (CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY == action) {
-                mBluetoothAdapter?.cancelDiscovery()
-                mTvRefresh?.text = "重新搜索"
-                state = 2
+
+                CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY -> {
+                    mBluetoothAdapter?.cancelDiscovery()
+                    mTvRefresh?.text = "重新搜索"
+                    _bluetoothKState = EBluetoothKState.STOP
+                }
             }
         }
     }
@@ -78,6 +75,7 @@ class BluetoothKChooseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_bluetooth)
+
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
@@ -85,21 +83,45 @@ class BluetoothKChooseActivity : AppCompatActivity() {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setDisplayShowHomeEnabled(true)
         }
-        mContext = this
         StackMonitor.instance.pushActivity(this)
-        mKey = intent.getStringExtra("callback_key")
+
+        mKey = intent.getStringExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY)
+
         // Register the BroadcastReceiver
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        filter.addAction(CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY)
-        registerReceiver(mReceiver, filter) // Don't forget to unregister during onDestroy
+        val intentFilter = IntentFilter(CBluetoothDevice.ACTION_FOUND)
+        intentFilter.addAction(CBluetoothKCons.INTENT_ACTION_BLUETOOTH_ADAPTER_CANCEL_DISCOVERY)
+        registerReceiver(mReceiver, intentFilter) // Don't forget to unregister during onDestroy
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "获取蓝牙适配器失败", Toast.LENGTH_SHORT).show()
+            "获取蓝牙适配器失败".showToast()
             StackMonitor.instance.popAllActivity()
         }
         checkBluetoothIsEnable()
         initData()
         initView()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CBluetoothKCons.REQUEST_CODE_OPEN_BT -> {
+                if (resultCode == RESULT_CANCELED) {
+                    "蓝牙打开失败".showToast()
+                } else {
+                    "蓝牙打开成功".showToast()
+                }
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            StackMonitor.instance.popAllActivity()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     @SuppressLint("MissingPermission")
@@ -111,25 +133,21 @@ class BluetoothKChooseActivity : AppCompatActivity() {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////
+
     @SuppressLint("MissingPermission")
     private fun checkBluetoothIsEnable(): Boolean =
         if (!mBluetoothAdapter!!.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            Toast.makeText(this, "蓝牙未打开", Toast.LENGTH_SHORT).show()
+            "蓝牙未打开".showToast()
+            startActivityForResult(Intent(CBluetoothAdapter.ACTION_REQUEST_ENABLE), CBluetoothKCons.REQUEST_CODE_OPEN_BT)
             false
-        } else {
-            true
-        }
+        } else true
 
     @SuppressLint("MissingPermission")
     private fun initData() {
         val pairedDevices = mBluetoothAdapter!!.bondedDevices
-        // If there are paired devices
-        if (pairedDevices.size > 0) {
-            // Loop through paired devices
-            for (device in pairedDevices) {
+        if (pairedDevices.size > 0) { // If there are paired devices
+            for (device in pairedDevices) {// Loop through paired devices
                 // Add the name and address to an array adapter to show in a ListView
                 val s = "${device.name}\n${device.address}"
                 if (!mPairedDeviceList.contains(s)) {
@@ -144,60 +162,38 @@ class BluetoothKChooseActivity : AppCompatActivity() {
     private fun initView() {
         mRecyclerView = findViewById<View>(R.id.rv_bluetooth_device_list) as RecyclerView
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
-        _bluetoothKDevicesAdapter = BluetoothKDevicesAdapter(mContext!!, mPairedDeviceList, mFoundDeviceList, mBluetoothAdapter!!, mKey!!)
+        _bluetoothKDevicesAdapter = BluetoothKDevicesAdapter(this, mPairedDeviceList, mFoundDeviceList, mBluetoothAdapter!!, mKey!!)
         mRecyclerView!!.adapter = _bluetoothKDevicesAdapter
         mTvRefresh = findViewById<View>(R.id.tv_refresh) as AppCompatTextView
         mTvRefresh!!.setOnClickListener(View.OnClickListener {
             if (!checkBluetoothIsEnable()) {
                 return@OnClickListener
             }
-            when (state) {
-                0 -> {
+            when (_bluetoothKState) {
+                EBluetoothKState.IDLE -> {
                     mBluetoothAdapter!!.startDiscovery()
-                    Toast.makeText(mContext, "开始搜索", Toast.LENGTH_SHORT).show()
+                    "开始搜索".showToast()
                     mTvRefresh!!.text = "停止"
-                    state = 1
+                    _bluetoothKState = EBluetoothKState.SEARCH
                 }
 
-                1 -> {
+                EBluetoothKState.SEARCH -> {
                     mBluetoothAdapter!!.cancelDiscovery()
-                    Toast.makeText(mContext, "停止搜索", Toast.LENGTH_SHORT).show()
+                    "停止搜索".showToast()
                     mTvRefresh!!.text = "重新搜索"
-                    state = 2
+                    _bluetoothKState = EBluetoothKState.STOP
                 }
 
-                2 -> {
+                EBluetoothKState.STOP -> {
                     mFoundDeviceList.clear()
                     _bluetoothKDevicesAdapter!!.notifyDataSetChanged()
                     mBluetoothAdapter!!.startDiscovery()
-                    Toast.makeText(mContext, "开始搜索", Toast.LENGTH_SHORT).show()
+                    "开始搜索".showToast()
                     mTvRefresh!!.text = "停止"
-                    state = 1
+                    _bluetoothKState = EBluetoothKState.SEARCH
                 }
             }
             mBluetoothAdapter!!.startDiscovery()
         })
     }
-
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "蓝牙打开失败", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "蓝牙打开成功", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            StackMonitor.instance.popAllActivity()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
 }

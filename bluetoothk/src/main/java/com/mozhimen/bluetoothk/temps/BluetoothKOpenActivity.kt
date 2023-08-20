@@ -1,13 +1,15 @@
 package com.mozhimen.bluetoothk.temps
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.mozhimen.basick.elemk.android.app.cons.CActivity
+import com.mozhimen.basick.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.basick.stackk.monitor.StackMonitor
-import com.mozhimen.bluetoothk.R
+import com.mozhimen.basick.utilk.android.content.startContext
+import com.mozhimen.basick.utilk.android.widget.showToast
+import com.mozhimen.bluetoothk.cons.CBluetoothKCons
 
 /**
  * @ClassName BluetoothKOpenActivity
@@ -21,36 +23,33 @@ import com.mozhimen.bluetoothk.R
  * status bar and navigation/system bar) with user interaction.
  */
 class BluetoothKOpenActivity : AppCompatActivity() {
-    companion object {
-        private const val REQUEST_ENABLE_BT = 0x01
-    }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_open_bluetooth)
-        val actionBar = supportActionBar
-        actionBar?.hide()
+        supportActionBar?.hide()
         StackMonitor.instance.pushActivity(this)
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        startActivityForResult(
+            Intent(CBluetoothAdapter.ACTION_REQUEST_ENABLE),
+            CBluetoothKCons.REQUEST_CODE_OPEN_BT
+        )
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "打开蓝牙成功", Toast.LENGTH_SHORT).show()
-                val key = intent.getStringExtra("callback_key")
-                if (key != null) {
-                    val intent = Intent(this, BluetoothKChooseActivity::class.java)
-                    intent.putExtra("callback_key", key)
-                    startActivity(intent)
+        when (requestCode) {
+            CBluetoothKCons.REQUEST_CODE_OPEN_BT -> {
+                if (resultCode == CActivity.RESULT_OK) {
+                    "打开蓝牙成功".showToast()
+                    intent.getStringExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY)?.let {
+                        startContext<BluetoothKConnectActivity> {
+                            putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, it)
+                        }
+                    }
+                } else {
+                    "用户取消打开蓝牙".showToast()
                 }
-                StackMonitor.instance.popActivity(this)
-            } else {
-                Toast.makeText(this, "用户取消打开蓝牙", Toast.LENGTH_SHORT).show()
                 StackMonitor.instance.popActivity(this)
             }
         }
