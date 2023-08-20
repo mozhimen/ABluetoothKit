@@ -13,13 +13,13 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".temps.OpenBluetoothActivity"
+            android:name=".temps.BluetoothKOpenActivity"
             android:theme="@style/Transparent" />
         <activity
-            android:name=".temps.ChooseBluetoothActivity"
+            android:name=".temps.BluetoothKChooseActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".temps.ConnectBluetoothActivity"
+            android:name=".temps.BluetoothKConnectActivity"
             android:theme="@style/Transparent" />
 
         <receiver android:name=".helpers.BluetoothKStateChangeReceiver">
