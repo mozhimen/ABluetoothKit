@@ -24,3 +24,4 @@ include ':bluetoothk'
 include ':SwiftKit'
 project(':SwiftKit').projectDir = new File("C:\\Users\\mozhimen\\Documents\\GitHub\\SwiftKit")
 include ':SwiftKit:basick'
+include ':SwiftKit:uicorek'

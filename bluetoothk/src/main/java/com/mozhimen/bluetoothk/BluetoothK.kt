@@ -51,8 +51,8 @@ class BluetoothK : IUtilK {
     private val _bluetoothKConnectCallbackMap = HashMap<String, BluetoothKConnectCallback>()
     private val _bluetoothKReadDataThreadMap = HashMap<String, BluetoothKReadDataThread>()
     private val _bluetoothKConnectThreadMap = HashMap<String, BluetoothKConnectThread>() //防止同一mac地址多次连接。
-    private val _macToKeyMap = HashMap<String, String>()
     private val _bluetoothSocketMap = HashMap<String, BluetoothSocket>()
+    private val _macToKeyMap = HashMap<String, String>()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,49 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".temps.BluetoothKChooseActivity">
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
+        android:id="@+id/btk_choose_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/ThemeK_OverlayAppDarkAction">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/btk_choose_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:background="@color/ui_gray_999"
+            app:popupTheme="@style/ThemeK_OverlayAppLight">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_refresh"
+            <TextView
+                android:id="@+id/btk_choose_txt_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center"
                 android:padding="5dp"
-                android:paddingEnd="20dp"
                 android:paddingStart="20dp"
-                android:text="搜索"
+                android:paddingEnd="20dp"
+                android:text="@string/str_search"
                 android:textAlignment="center"
-                android:textColor="@color/white"/>
+                android:textColor="@color/ui_white" />
 
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bluetooth_device_list"
+        android:id="@+id/btk_choose_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/bluetoothk_item" />
 
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.mozhimen.bluetoothk.temps
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -21,11 +20,11 @@ class BluetoothKConnectActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_connect_bluetooth)
+        setContentView(R.layout.bluetoothk_activity_connect)
         supportActionBar?.hide()
         StackMonitor.instance.pushActivity(this)
 
-        val mProgressBar = findViewById<View>(R.id.progress_bar) as? ProgressBar?
+        val mProgressBar = findViewById<View>(R.id.btk_conn_progress) as? ProgressBar?
         mProgressBar?.isIndeterminate = true
 
         intent.getStringExtra(CBluetoothKCons.EXTRA_BLUETOOTH_MAC)?.let {

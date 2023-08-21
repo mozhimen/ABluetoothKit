@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/btk_item_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/dp_010"
+        android:paddingVertical="6dp">
+
+        <TextView
+            android:id="@+id/btk_item_txt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/ui_gray_999"
+            android:textSize="@dimen/sp_20"
+            tools:text="DP-330L" />
+
+        <TextView
+            android:id="@+id/btk_item_txt_mac"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/ui_gray_800"
+            android:textSize="@dimen/sp_18"
+            tools:text="FF:FF:FF:FF:FF:FF" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="@dimen/dp_010"
+        android:background="@color/ui_gray_350" />
+
+</LinearLayout>
