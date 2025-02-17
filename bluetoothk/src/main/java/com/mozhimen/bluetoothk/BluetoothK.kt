@@ -8,10 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
-import com.mozhimen.basick.utilk.android.content.startContext
-import com.mozhimen.basick.utilk.android.os.UtilKHandler
-import com.mozhimen.basick.utilk.android.util.dt
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.kotlin.utilk.android.content.startContext
+import com.mozhimen.kotlin.utilk.android.os.UtilKHandler
+import com.mozhimen.kotlin.utilk.android.util.d
 import com.mozhimen.bluetoothk.commons.BluetoothKConnectCallback
 import com.mozhimen.bluetoothk.commons.BluetoothKConnectWithDataManageCallback
 import com.mozhimen.bluetoothk.commons.BluetoothKMacCallback
@@ -24,6 +23,8 @@ import com.mozhimen.bluetoothk.helpers.BluetoothKReadDataThread
 import com.mozhimen.bluetoothk.temps.BluetoothKChooseActivity
 import com.mozhimen.bluetoothk.temps.BluetoothKConnectActivity
 import com.mozhimen.bluetoothk.temps.BluetoothKOpenActivity
+import com.mozhimen.kotlin.utilk.android.os.UtilKLooperWrapper
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import java.io.IOException
 
 
@@ -99,14 +100,14 @@ class BluetoothK : IUtilK {
     fun connectBluetooth(context: Context, mac: String, isShowConnectBluetoothActivity: Boolean, callback: BluetoothKConnectCallback) {
 
         //确认在主线程中
-        if (_handler == null && !UtilKHandler.isMainLooper()) {
+        if (_handler == null && !UtilKLooperWrapper.isLooperMain()) {
             throw IllegalStateException("please call MedBluetooth.connect in main thread")
         } else {
             if (_handler == null)
                 _handler = Handler()
         }
         _context = context
-        ("connectBluetooth: before put in map callback is BluetoothKConnectWithDataManageCallback == " + (callback is BluetoothKConnectWithDataManageCallback)).dt(TAG)
+        ("connectBluetooth: before put in map callback is BluetoothKConnectWithDataManageCallback == " + (callback is BluetoothKConnectWithDataManageCallback)).d(TAG)
 
         //如果mac地址对应的callback key已经存在
         val key: String = if (_macToKeyMap[mac] != null) _macToKeyMap[mac]!! else (Math.random() * 10000000).toInt().toString() + ""
@@ -115,7 +116,7 @@ class BluetoothK : IUtilK {
         Log.i("BluetoothStateChange", "final mac = $mac")
         Log.i("BluetoothStateChange", "final key = " + _macToKeyMap[mac])
         _bluetoothKConnectCallbackMap[key] = callback
-        ("connectBluetooth: after put in map callback is BluetoothKConnectWithDataManageCallback == " + (_bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) + " callbackid = " + _bluetoothKConnectCallbackMap[key].toString()).dt(
+        ("connectBluetooth: after put in map callback is BluetoothKConnectWithDataManageCallback == " + (_bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) + " callbackid = " + _bluetoothKConnectCallbackMap[key].toString()).d(
             TAG
         )
 
@@ -204,7 +205,7 @@ class BluetoothK : IUtilK {
         if (_macToKeyMap[device!!.address] == null) {
             _macToKeyMap[device.address] = key
         }
-        ("executeBluetoothConnectCallback: mBluetoothConnectCallbackMap.get(key) instanceof BluetoothKConnectWithDataManageCallback == " + (_bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) + " callbackid = " + _bluetoothKConnectCallbackMap[key].toString()).dt(
+        ("executeBluetoothConnectCallback: mBluetoothConnectCallbackMap.get(key) instanceof BluetoothKConnectWithDataManageCallback == " + (_bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) + " callbackid = " + _bluetoothKConnectCallbackMap[key].toString()).d(
             TAG
         )
         if (e == null && _bluetoothKConnectCallbackMap[key] is BluetoothKConnectWithDataManageCallback) {

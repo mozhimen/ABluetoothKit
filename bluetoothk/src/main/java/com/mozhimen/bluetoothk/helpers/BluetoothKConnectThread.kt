@@ -5,10 +5,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import com.mozhimen.basick.utilk.android.content.startContext
 import com.mozhimen.bluetoothk.BluetoothK
 import com.mozhimen.bluetoothk.commons.BluetoothKSocketConnectedCallback
 import com.mozhimen.bluetoothk.temps.BluetoothKOpenActivity
+import com.mozhimen.kotlin.utilk.android.content.startContext
 import java.io.IOException
 import java.util.UUID
 

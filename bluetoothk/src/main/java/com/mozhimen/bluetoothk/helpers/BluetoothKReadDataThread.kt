@@ -2,9 +2,9 @@ package com.mozhimen.bluetoothk.helpers
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.bluetoothk.BluetoothK
 import com.mozhimen.bluetoothk.commons.BluetoothKConnectWithDataManageCallback
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import java.io.IOException
 import java.io.InputStream
 
