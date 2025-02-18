@@ -20,7 +20,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ABluetoothKit"
 include ':app'
-include ':bluetoothk'
+include ':deprecated'
 //ALibKit_Google
 include ':ALibKit_Google'
 project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
@@ -47,3 +47,10 @@ include ':KUtilKit:kotlin'
 include ':ASwiftKit'
 project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
 include ':ASwiftKit:basick'
+//AStackKit
+include ':AStackKit'
+project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
+include ':AStackKit:stackk'
+include ':AStackKit:callback'
+include ':AStackKit:basic'
+include ':bluetoothk'

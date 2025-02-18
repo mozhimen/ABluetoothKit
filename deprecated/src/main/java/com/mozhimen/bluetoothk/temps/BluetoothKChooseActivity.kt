@@ -146,6 +146,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
         }
     }
 
+
     @SuppressLint("NotifyDataSetChanged")
     private fun initView() {
         _recyclerView = findViewById<View>(R.id.btk_choose_rv) as RecyclerView
