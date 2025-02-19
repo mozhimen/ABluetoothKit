@@ -1,0 +1,160 @@
+package com.mozhimen.bluetoothk
+
+import android.bluetooth.BluetoothAdapter
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import com.mozhimen.basick.utils.requireContext
+import com.mozhimen.bluetoothk.commons.IBluetoothKScanListener
+import com.mozhimen.bluetoothk.commons.IBluetoothKStateListener
+import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
+import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
+import com.mozhimen.kotlin.elemk.commons.I_Listener
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_ACCESS_COARSE_LOCATION
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_ACCESS_FINE_LOCATION
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_BLUETOOTH_ADVERTISE
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_BLUETOOTH_CONNECT
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_BLUETOOTH_SCAN
+import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.permissionk.xxpermissions.XXPermissionsCheckUtil
+import com.mozhimen.permissionk.xxpermissions.XXPermissionsNavHostUtil
+import com.mozhimen.permissionk.xxpermissions.XXPermissionsRequestUtil
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicBoolean
+
+/**
+ * @ClassName BluetoothK
+ * @Description TODO
+ * @Author mozhimen
+ * @Date 2025/2/19
+ * @Version 1.0
+ */
+class BluetoothK : IUtilK {
+    private var _bluetoothKEventListeners: CopyOnWriteArrayList<IBluetoothKStateListener> = CopyOnWriteArrayList<IBluetoothKStateListener>()
+    private var _bluetoothAdapter: BluetoothAdapter? = null
+        get() {
+            if (field != null) return field
+            val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+            return bluetoothAdapter.also { field = it }
+        }
+    private var _isInit = AtomicBoolean(false)
+    private val _btReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (CBluetoothDevice.ACTION_ACL_DISCONNECTED == action) {
+                /*                try {
+                                    PrinterHelper.portClose()
+                                } catch (e: java.lang.Exception) {
+                                    e.printStackTrace()
+                                }
+                                vdb.txtTips.setText(R.string.activity_main_tips)*/
+                UtilKLogWrapper.d(TAG, "_btReceiver: ACTION_ACL_DISCONNECTED")
+                _bluetoothKEventListener?.onDisconnect()
+            } else if (BluetoothAdapter.ACTION_STATE_CHANGED == action) {
+                val state = intent.getIntExtra(
+                    CBluetoothAdapter.EXTRA_STATE,
+                    CBluetoothAdapter.ERROR
+                )
+                when (state) {
+                    BluetoothAdapter.STATE_OFF -> {
+                        /*                        if (PrinterHelper.IsOpened()) {
+                            Log.d("Print", "BluetoothBroadcastReceiver:Bluetooth close")
+                            try {
+                                PrinterHelper.portClose()
+                            } catch (e: java.lang.Exception) {
+                                e.printStackTrace()
+                            }
+                            vdb.txtTips.setText(R.string.activity_main_tips)
+                            Utility.show(this@MainActivity, getString(R.string.activity_main_close))
+                        }*/
+                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_OFF")
+                        _bluetoothKEventListener?.onOff()
+                    }
+
+                    BluetoothAdapter.STATE_TURNING_OFF -> {
+                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_OFF")
+                        _bluetoothKEventListener?.onTurningOff()
+                    }
+
+                    BluetoothAdapter.STATE_ON -> {
+                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_ON")
+                        _bluetoothKEventListener?.onOn()
+                    }
+
+                    BluetoothAdapter.STATE_TURNING_ON -> {
+                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_ON")
+                        _bluetoothKEventListener?.onTurningOn()
+                    }
+                }
+            }
+        }
+    }
+
+    fun init(context: Context) {
+        if (_isInit.compareAndSet(false, true)) {
+            val intentFilterBt = IntentFilter()
+            intentFilterBt.addAction(CBluetoothDevice.ACTION_ACL_DISCONNECTED)
+            intentFilterBt.addAction(CBluetoothAdapter.ACTION_STATE_CHANGED)
+            context.registerReceiver(_btReceiver, intentFilterBt)
+        }
+    }
+
+    fun addBluetoothKEventListener(listener: IBluetoothKStateListener) {
+        if (!_bluetoothKEventListeners.contains(listener))
+            _bluetoothKEventListeners.add(listener)
+    }
+
+    fun removeBluetoothKEventListener(listener: IBluetoothKStateListener){
+        if (_bluetoothKEventListeners.contains(listener))
+            _bluetoothKEventListeners.remove(listener)
+    }
+
+    fun release(context: Context) {
+        context.unregisterReceiver(_btReceiver)
+    }
+
+    fun isBluetoothEnabled(): Boolean =
+        _bluetoothAdapter?.isEnabled == true
+
+    fun getBluetoothAdapter(): BluetoothAdapter? =
+        _bluetoothAdapter
+
+    @OptIn(OPermission_BLUETOOTH_SCAN::class, OPermission_BLUETOOTH_CONNECT::class, OPermission_BLUETOOTH_ADVERTISE::class, OPermission_ACCESS_COARSE_LOCATION::class, OPermission_ACCESS_FINE_LOCATION::class)
+    fun requestBluetoothPermission(context: Context, onGranted: I_Listener) {
+        if (UtilKBuildVersion.isAfterV_31_12_S()) {
+            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter31(context)) {
+                onGranted.invoke()
+            } else {
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after31(context, {
+                    onGranted.invoke()
+                }, {
+                    XXPermissionsNavHostUtil.startPermission_BLUETOOTH(context)
+                })
+            }
+        } else if (UtilKBuildVersion.isAfterV_23_6_M()) {
+            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter23(context)) {
+                onGranted.invoke()
+            } else {
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after23(context, {
+                    onGranted.invoke()
+                }, {
+                    XXPermissionsNavHostUtil.startPermission_BLUETOOTH(context)
+                })
+            }
+        } else {
+            onGranted.invoke()
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        val instance = INSTANCE.holder
+    }
+
+    private object INSTANCE {
+        val holder = BluetoothK()
+    }
+}

@@ -1,7 +1,6 @@
 package com.mozhimen.bluetoothk
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,7 +8,7 @@ import android.content.IntentFilter
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.basick.utils.requireContext
-import com.mozhimen.bluetoothk.commons.IBluetoothKEventListener
+import com.mozhimen.bluetoothk.commons.IBluetoothKStateListener
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -27,13 +26,9 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
-    companion object {
+class BluetoothKStateProxy : BaseWakeBefDestroyLifecycleObserver() {
 
-    }
-
-    private var _bluetoothKEventListener: IBluetoothKEventListener? = null
-
+    private var _bluetoothKEventListener: IBluetoothKStateListener? = null
 
     private val _btReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -65,20 +60,20 @@ class BluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
                             Utility.show(this@MainActivity, getString(R.string.activity_main_close))
                         }*/
                         UtilKLogWrapper.d(TAG, "_btReceiver: STATE_OFF")
-                        _bluetoothKEventListener?.onClose()
+                        _bluetoothKEventListener?.onOff()
                     }
 
                     BluetoothAdapter.STATE_TURNING_OFF -> {
                         UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_OFF")
-                        _bluetoothKEventListener?.onClosing()
+                        _bluetoothKEventListener?.onTurningOff()
                     }
                     BluetoothAdapter.STATE_ON -> {
                         UtilKLogWrapper.d(TAG, "_btReceiver: STATE_ON")
-                        _bluetoothKEventListener?.onOpen()
+                        _bluetoothKEventListener?.onOn()
                     }
                     BluetoothAdapter.STATE_TURNING_ON -> {
                         UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_ON")
-                        _bluetoothKEventListener?.onOpening()
+                        _bluetoothKEventListener?.onTurningOn()
                     }
                 }
             }
@@ -87,7 +82,7 @@ class BluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
 
     ////////////////////////////////////////////////////////////////////
 
-    fun setBluetoothKEventListener(listener: IBluetoothKEventListener) {
+    fun setBluetoothKEventListener(listener: IBluetoothKStateListener) {
         _bluetoothKEventListener = listener
     }
 
