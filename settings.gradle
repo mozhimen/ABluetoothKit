@@ -21,6 +21,8 @@ dependencyResolutionManagement {
 rootProject.name = "ABluetoothKit"
 include ':app'
 include ':deprecated'
+include ':bluetoothk'
+include ':bluetoothk:test'
 //ALibKit_Google
 include ':ALibKit_Google'
 project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
@@ -47,10 +49,24 @@ include ':KUtilKit:kotlin'
 include ':ASwiftKit'
 project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
 include ':ASwiftKit:basick'
+include ':ASwiftKit:xmlk'
+include ':ASwiftKit:uik:databinding'
 //AStackKit
 include ':AStackKit'
 project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
 include ':AStackKit:stackk'
 include ':AStackKit:callback'
 include ':AStackKit:basic'
-include ':bluetoothk'
+//APermissionKit_XXPermissions
+include ':APermissionKit_XXPermissions'
+project(':APermissionKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\APermissionKit_XXPermissions")
+include ':APermissionKit_XXPermissions:permissionk_xxpermissions'
+include ':APermissionKit_XXPermissions:library'
+//AXmlKit_BaseRecyclerViewAdapterHelper
+include ':AXmlKit_BaseRecyclerViewAdapterHelper'
+project(':AXmlKit_BaseRecyclerViewAdapterHelper').projectDir = new File("D:\\WorkSpace\\GitHub\\AXmlKit_BaseRecyclerViewAdapterHelper")
+include ':AXmlKit_BaseRecyclerViewAdapterHelper:library'
+//AXmlKit
+include ':AXmlKit'
+project(':AXmlKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AXmlKit")
+include ':AXmlKit:vhk'
