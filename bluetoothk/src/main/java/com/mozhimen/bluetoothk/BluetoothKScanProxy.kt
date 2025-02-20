@@ -84,6 +84,10 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
         }
     }
 
+    fun setBluetoothKScanListener(listener: IBluetoothKScanListener) {
+        _bluetoothKScanListener = listener
+    }
+
     fun startScan(context: Context) {
         if (BluetoothK.instance.getBluetoothAdapter() == null)
             return

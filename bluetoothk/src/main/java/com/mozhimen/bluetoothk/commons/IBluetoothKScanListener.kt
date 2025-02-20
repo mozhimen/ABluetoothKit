@@ -17,7 +17,7 @@ interface IBluetoothKScanListener {
      * @param device 本次连接的设备，可存下来方便下次自动重连，就不用每次都选择了。
      * @param e 错误
      */
-    fun onFound(device: BluetoothDevice){}
-    fun onBonding(device: BluetoothDevice){}
-    fun onBonded(device: BluetoothDevice){}
+    fun onFound(bluetoothDevice: BluetoothDevice){}
+    fun onBonding(bluetoothDevice: BluetoothDevice){}
+    fun onBonded(bluetoothDevice: BluetoothDevice){}
 }
