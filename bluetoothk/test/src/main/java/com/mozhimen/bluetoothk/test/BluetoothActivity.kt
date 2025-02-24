@@ -24,6 +24,7 @@ import com.mozhimen.kotlin.utilk.android.bluetooth.isBondState_BOND_BONDED
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.android.widget.showToast
 import com.mozhimen.kotlin.utilk.kotlin.ifNotEmpty
+import com.mozhimen.kotlin.utilk.kotlin.ifNotEmptyOr
 import com.mozhimen.uik.databinding.bases.viewdatabinding.activity.BaseActivityVDB
 import com.mozhimen.xmlk.vhk.VHKLifecycle2
 
@@ -44,11 +45,19 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
         override fun onBindViewHolder(holder: VHKLifecycle2, position: Int, item: BluetoothDevice?) {
             super.onBindViewHolder(holder, position, item)
             item ?: return
-            item.name?.ifNotEmpty {
-                holder.findViewById<TextView>(android.R.id.text1).setText(if (item.name.isEmpty()) "Null" else item.name)
+            item.name?.ifNotEmptyOr({
+                holder.findViewById<TextView>(android.R.id.text1).setText(it)
+            }, {
+                holder.findViewById<TextView>(android.R.id.text1).setText("Null")
+            })?: kotlin.run {
+                holder.findViewById<TextView>(android.R.id.text1).setText("Null")
             }
-            item.address.ifNotEmpty {
+            item.address?.ifNotEmptyOr({
                 holder.findViewById<TextView>(android.R.id.text2).setText(item.address)
+            },{
+                holder.findViewById<TextView>(android.R.id.text2).setText("Null")
+            })?: kotlin.run {
+                holder.findViewById<TextView>(android.R.id.text2).setText("Null")
             }
         }
 
@@ -110,9 +119,9 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
                 }
 
                 override fun onBonded(bluetoothDevice: BluetoothDevice) {
-                    val intent = Intent()
-                    intent.putExtra("SelectedBDAddress", bluetoothDevice.address)
-                    setResult(CActivity.RESULT_OK, intent)
+                    setResult(CActivity.RESULT_OK, Intent().apply {
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice.address)
+                    })
                     finish()
                 }
             })
