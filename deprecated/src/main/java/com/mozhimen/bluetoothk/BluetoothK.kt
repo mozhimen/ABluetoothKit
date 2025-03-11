@@ -65,7 +65,7 @@ class BluetoothK : IUtilK {
      */
     fun getBTMac(context: Context, mac: String, showConnectBluetoothActivity: Boolean, bluetoothKMacCallback: BluetoothKMacCallback) {
         _context = context
-        context.startContext<BluetoothKChooseActivity>() {
+        context.startContext<BluetoothKChooseActivity> {
             putExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY, "1-*1")
         }
     }

@@ -21,6 +21,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.bluetooth.isBondState_BOND_BONDED
+import com.mozhimen.kotlin.utilk.android.bluetooth.isBondState_BOND_NONE
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.android.widget.showToast
 import com.mozhimen.kotlin.utilk.kotlin.ifNotEmpty
@@ -42,6 +43,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
 
     private var bluetoothDevices: MutableList<BluetoothDevice> = ArrayList()
     private var baseQuickAdapter: BaseQuickAdapter<BluetoothDevice, VHKLifecycle2> = object : BaseQuickAdapter<BluetoothDevice, VHKLifecycle2>(bluetoothDevices) {
+        @SuppressLint("MissingPermission")
         override fun onBindViewHolder(holder: VHKLifecycle2, position: Int, item: BluetoothDevice?) {
             super.onBindViewHolder(holder, position, item)
             item ?: return
@@ -70,7 +72,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     private val bluetoothKScanProxy by lazy { BluetoothKScanProxy() }
 
-    @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class, OApiInit_InApplication::class)
+    @OptIn(OApiInit_InApplication::class)
     @SuppressLint("MissingPermission")
     override fun initView(savedInstanceState: Bundle?) {
         if (BluetoothK.instance.getBluetoothAdapter() == null) {
@@ -83,13 +85,12 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
         vdb.recyHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         vdb.recyHistory.setAdapter(baseQuickAdapter)
         baseQuickAdapter.setOnItemClickListener(BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-            if (bluetoothDevices[position].isBondState_BOND_BONDED()) {
+            if (bluetoothDevices[position].isBondState_BOND_BONDED()||bluetoothDevices[position].isBondState_BOND_NONE()) {
                 setResult(CActivity.RESULT_OK, Intent().apply {
-                    putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevices[position].address)
+                    putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevices[position])
                 })
                 finish()
             } else {
-//                Thread { bluetoothKScanProxy.startBound(bluetoothDevices[position]) }.start()
                 startConnect(bluetoothDevices[position])
             }
         })
@@ -120,7 +121,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
 
                 override fun onBonded(bluetoothDevice: BluetoothDevice) {
                     setResult(CActivity.RESULT_OK, Intent().apply {
-                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice.address)
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice)
                     })
                     finish()
                 }

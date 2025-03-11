@@ -95,6 +95,8 @@ class BluetoothK : IUtilK {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+
     fun init(context: Context) {
         if (_isInit.compareAndSet(false, true)) {
             val intentFilterBt = IntentFilter()
@@ -129,7 +131,7 @@ class BluetoothK : IUtilK {
     fun getBluetoothAdapter(): BluetoothAdapter? =
         _bluetoothAdapter
 
-
+    ///////////////////////////////////////////////////////////////////////////////
 
     companion object {
         @JvmStatic

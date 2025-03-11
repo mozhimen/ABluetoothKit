@@ -70,3 +70,7 @@ include ':AXmlKit_BaseRecyclerViewAdapterHelper:library'
 include ':AXmlKit'
 project(':AXmlKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AXmlKit")
 include ':AXmlKit:vhk'
+//ANavigateKit
+include ':ANavigateKit'
+project(':ANavigateKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ANavigateKit")
+include ':ANavigateKit:start'

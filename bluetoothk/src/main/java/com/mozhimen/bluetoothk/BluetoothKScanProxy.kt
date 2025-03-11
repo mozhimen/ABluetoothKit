@@ -1,5 +1,6 @@
 package com.mozhimen.bluetoothk
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -54,6 +55,7 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
 
                 CBluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
                     val bluetoothDevice: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                    UtilKLogWrapper.d(TAG, "onReceive: bluetoothDevice?.bondState ${bluetoothDevice?.bondState}")
                     when (bluetoothDevice?.bondState) {
                         CBluetoothDevice.BOND_BONDING -> {
                             UtilKLogWrapper.d(TAG, "btReceiver: BOND_BONDING......")
@@ -85,29 +87,31 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
         }
     }
 
+    //////////////////////////////////////////////////////////////////////////
+
     fun setBluetoothKScanListener(listener: IBluetoothKScanListener) {
         _bluetoothKScanListener = listener
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun startScan(context: Context) {
+    fun startScan(activity: Activity) {
         if (BluetoothK.instance.getBluetoothAdapter() == null)
             return
         if (!BluetoothK.instance.isBluetoothEnabled())
             BluetoothK.instance.getBluetoothAdapter()?.enable()
-        BluetoothKUtil.requestBluetoothPermission(context) {
+        BluetoothKUtil.requestBluetoothPermission(activity) {
             cancelScan()
             BluetoothK.instance.getBluetoothAdapter()?.startDiscovery()
         }
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun isScaning(): Boolean =
+    fun isScanning(): Boolean =
         BluetoothK.instance.getBluetoothAdapter()?.isDiscovering == true
 
     @OptIn(OApiInit_InApplication::class)
     fun cancelScan() {
-        if (isScaning()) {
+        if (isScanning()) {
             BluetoothK.instance.getBluetoothAdapter()?.cancelDiscovery()
         }
         _bluetoothDevices.clear()
@@ -119,6 +123,8 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
         }
         _bluetoothDevices[bluetoothDevice.address]?.createBond()
     }
+
+    //////////////////////////////////////////////////////////////////////////
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
