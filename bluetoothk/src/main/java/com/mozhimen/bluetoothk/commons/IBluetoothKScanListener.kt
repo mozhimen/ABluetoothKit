@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothSocket
  * @Version 1.0
  */
 interface IBluetoothKScanListener {
+    fun onStart(){}
     /**
      * 连接成功或失败后调用
      * @param socket 获得的socket
@@ -20,4 +21,6 @@ interface IBluetoothKScanListener {
     fun onFound(bluetoothDevice: BluetoothDevice){}
     fun onBonding(bluetoothDevice: BluetoothDevice){}
     fun onBonded(bluetoothDevice: BluetoothDevice){}
+
+    fun onStop(){}
 }

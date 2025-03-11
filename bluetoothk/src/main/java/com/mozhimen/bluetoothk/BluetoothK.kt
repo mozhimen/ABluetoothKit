@@ -45,50 +45,48 @@ class BluetoothK : IUtilK {
     private var _isInit = AtomicBoolean(false)
     private val _btReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            if (CBluetoothDevice.ACTION_ACL_DISCONNECTED == action) {
-                /*                try {
+            when (intent.action) {
+                CBluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                    /*                try {
+                    PrinterHelper.portClose()
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+                vdb.txtTips.setText(R.string.activity_main_tips)*/
+                    UtilKLogWrapper.d(TAG, "_btReceiver: ACTION_ACL_DISCONNECTED")
+                    _bluetoothKEventListeners.forEach { it.onDisconnect() }
+                }
+                BluetoothAdapter.ACTION_STATE_CHANGED->{
+                    when (intent.getIntExtra(CBluetoothAdapter.EXTRA_STATE, CBluetoothAdapter.ERROR)) {
+                        BluetoothAdapter.STATE_OFF -> {
+                            /*                        if (PrinterHelper.IsOpened()) {
+                                Log.d("Print", "BluetoothBroadcastReceiver:Bluetooth close")
+                                try {
                                     PrinterHelper.portClose()
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
                                 }
-                                vdb.txtTips.setText(R.string.activity_main_tips)*/
-                UtilKLogWrapper.d(TAG, "_btReceiver: ACTION_ACL_DISCONNECTED")
-                _bluetoothKEventListeners.forEach { it.onDisconnect() }
-            } else if (BluetoothAdapter.ACTION_STATE_CHANGED == action) {
-                val state = intent.getIntExtra(
-                    CBluetoothAdapter.EXTRA_STATE,
-                    CBluetoothAdapter.ERROR
-                )
-                when (state) {
-                    BluetoothAdapter.STATE_OFF -> {
-                        /*                        if (PrinterHelper.IsOpened()) {
-                            Log.d("Print", "BluetoothBroadcastReceiver:Bluetooth close")
-                            try {
-                                PrinterHelper.portClose()
-                            } catch (e: java.lang.Exception) {
-                                e.printStackTrace()
-                            }
-                            vdb.txtTips.setText(R.string.activity_main_tips)
-                            Utility.show(this@MainActivity, getString(R.string.activity_main_close))
-                        }*/
-                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_OFF")
-                        _bluetoothKEventListeners.forEach { it.onOff() }
-                    }
+                                vdb.txtTips.setText(R.string.activity_main_tips)
+                                Utility.show(this@MainActivity, getString(R.string.activity_main_close))
+                            }*/
+                            UtilKLogWrapper.d(TAG, "_btReceiver: STATE_OFF")
+                            _bluetoothKEventListeners.forEach { it.onOff() }
+                        }
 
-                    BluetoothAdapter.STATE_TURNING_OFF -> {
-                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_OFF")
-                        _bluetoothKEventListeners.forEach { it.onTurningOff() }
-                    }
+                        BluetoothAdapter.STATE_TURNING_OFF -> {
+                            UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_OFF")
+                            _bluetoothKEventListeners.forEach { it.onTurningOff() }
+                        }
 
-                    BluetoothAdapter.STATE_ON -> {
-                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_ON")
-                        _bluetoothKEventListeners.forEach { it.onOn() }
-                    }
+                        BluetoothAdapter.STATE_ON -> {
+                            UtilKLogWrapper.d(TAG, "_btReceiver: STATE_ON")
+                            _bluetoothKEventListeners.forEach { it.onOn() }
+                        }
 
-                    BluetoothAdapter.STATE_TURNING_ON -> {
-                        UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_ON")
-                        _bluetoothKEventListeners.forEach { it.onTurningOn() }
+                        BluetoothAdapter.STATE_TURNING_ON -> {
+                            UtilKLogWrapper.d(TAG, "_btReceiver: STATE_TURNING_ON")
+                            _bluetoothKEventListeners.forEach { it.onTurningOn() }
+                        }
                     }
                 }
             }
@@ -116,7 +114,7 @@ class BluetoothK : IUtilK {
             _bluetoothKEventListeners.remove(listener)
     }
 
-    fun clearBluetoothKEventListeners(){
+    fun clearBluetoothKEventListeners() {
         _bluetoothKEventListeners.clear()
     }
 

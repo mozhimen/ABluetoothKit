@@ -1,7 +1,6 @@
 package com.mozhimen.bluetoothk.utils
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import com.mozhimen.bluetoothk.cons.CBluetoothK
 import com.mozhimen.kotlin.elemk.commons.I_Listener
@@ -14,7 +13,6 @@ import com.mozhimen.kotlin.utilk.android.content.UtilKIntentGet
 import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.navigatek.start.utils.startForResult
 import com.mozhimen.permissionk.xxpermissions.XXPermissionsCheckUtil
-import com.mozhimen.permissionk.xxpermissions.XXPermissionsNavHostUtil
 import com.mozhimen.permissionk.xxpermissions.XXPermissionsRequestUtil
 
 /**
@@ -38,32 +36,38 @@ object BluetoothKUtil {
             if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter31(activity.applicationContext)) {
                 onGranted.invoke()
             } else {
-                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after31(activity.applicationContext, {
-                    onGranted.invoke()
-                }, {
-                    activity.startForResult(UtilKIntentGet.getBluetoothAdapter_ACTION_REQUEST_ENABLE(), CBluetoothK.REQUEST_CODE_OPEN_BT) { a: Boolean, b: Intent? ->
-                        if (a) {
-                            onGranted.invoke()
-                        }
-                    }
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after31(activity.applicationContext, onGranted, {
+                    startForResult_ACTION_REQUEST_ENABLE(activity, onGranted)
                 })
             }
         } else if (UtilKBuildVersion.isAfterV_23_6_M()) {
             if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter23(activity.applicationContext)) {
                 onGranted.invoke()
             } else {
-                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after23(activity.applicationContext, {
-                    onGranted.invoke()
-                }, {
-                    activity.startForResult(UtilKIntentGet.getBluetoothAdapter_ACTION_REQUEST_ENABLE(), CBluetoothK.REQUEST_CODE_OPEN_BT) { a: Boolean, b: Intent? ->
-                        if (a) {
-                            onGranted.invoke()
-                        }
-                    }
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after23(activity.applicationContext, onGranted, {
+                    startForResult_ACTION_REQUEST_ENABLE(activity, onGranted)
                 })
             }
         } else {
             onGranted.invoke()
+        }
+    }
+
+    @JvmStatic
+    fun startForResult_ACTION_REQUEST_ENABLE(activity: Activity, onGranted: I_Listener) {
+        activity.startForResult(UtilKIntentGet.getBluetoothAdapter_ACTION_REQUEST_ENABLE(), CBluetoothK.REQUEST_CODE_ENABLE) { a: Boolean, b: Intent? ->
+            if (a) {
+                onGranted.invoke()
+            }
+        }
+    }
+
+    @JvmStatic
+    fun startForResult_ACTION_REQUEST_DISCOVERABLE(activity: Activity, duration: Int, onGranted: I_Listener) {
+        activity.startForResult(UtilKIntentGet.getBluetoothAdapter_ACTION_REQUEST_DISCOVERABLE(duration), CBluetoothK.REQUEST_CODE_DISCOVERABLE) { a: Boolean, b: Intent? ->
+            if (a) {
+                onGranted.invoke()
+            }
         }
     }
 }

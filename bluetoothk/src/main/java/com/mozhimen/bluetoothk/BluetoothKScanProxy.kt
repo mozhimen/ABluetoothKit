@@ -1,7 +1,6 @@
 package com.mozhimen.bluetoothk
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -18,6 +17,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.android.content.gainParcelableExtra
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import java.util.concurrent.ConcurrentHashMap
 
@@ -40,32 +40,35 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent!!.action
             when (action) {
+                CBluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
+                    UtilKLogWrapper.d(TAG, "onReceive: ACTION_DISCOVERY_STARTED")
+                }
+
+                CBluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    UtilKLogWrapper.d(TAG, "onReceive: ACTION_DISCOVERY_FINISHED")
+                    _bluetoothKScanListener?.onStop()
+                }
+
                 CBluetoothDevice.ACTION_FOUND -> {//scan start
-                    val bluetoothDevice = intent.getParcelableExtra<BluetoothDevice>(CBluetoothDevice.EXTRA_DEVICE)
+                    UtilKLogWrapper.d(TAG, "onReceive: ACTION_FOUND")
+                    val bluetoothDevice = intent.gainParcelableExtra<BluetoothDevice>(CBluetoothDevice.EXTRA_DEVICE)
                     if (bluetoothDevice != null) {
-                        UtilKLogWrapper.d(TAG, "_btReceiver: bluetoothDevice $bluetoothDevice")
                         _bluetoothKScanListener?.onFound(bluetoothDevice)
                     }
-//                    if (device!!.bluetoothClass.majorDeviceClass == 1536) {
-//                        if (mTodata != null) {
-//                            mTodata.succeed(device)
-//                        }
-//                    }
                 }
 
                 CBluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
-                    val bluetoothDevice: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    UtilKLogWrapper.d(TAG, "onReceive: bluetoothDevice?.bondState ${bluetoothDevice?.bondState}")
+                    val bluetoothDevice = intent.gainParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                     when (bluetoothDevice?.bondState) {
                         CBluetoothDevice.BOND_BONDING -> {
-                            UtilKLogWrapper.d(TAG, "btReceiver: BOND_BONDING......")
+                            UtilKLogWrapper.d(TAG, "onReceive: ACTION_BOND_STATE_CHANGED BOND_BONDING......")
                             if (_bluetoothDevices.contains(bluetoothDevice) && _bluetoothDevices[bluetoothDevice.address] != null) {
                                 _bluetoothKScanListener?.onBonding(bluetoothDevice)
                             }
                         }
 
                         CBluetoothDevice.BOND_BONDED -> {
-                            UtilKLogWrapper.d(TAG, "btReceiver: BOND_BONDED")
+                            UtilKLogWrapper.d(TAG, "onReceive: ACTION_BOND_STATE_CHANGED BOND_BONDED")
                             if (_bluetoothDevices.contains(bluetoothDevice) && _bluetoothDevices[bluetoothDevice.address] != null) {
                                 _bluetoothDevices.remove(bluetoothDevice.address)
                                 _bluetoothKScanListener?.onBonded(bluetoothDevice)
@@ -73,15 +76,11 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
                         }
 
                         CBluetoothDevice.BOND_NONE -> {
-                            UtilKLogWrapper.d(TAG, "btReceiver: BOND_NONE")
+                            UtilKLogWrapper.d(TAG, "onReceive: ACTION_BOND_STATE_CHANGED BOND_NONE")
                         }
 
                         else -> {}
                     }
-                }
-
-                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    UtilKLogWrapper.d(TAG, "btReceiver: DISCOVERY_FINISHED")
                 }
             }
         }
@@ -129,9 +128,10 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         val intentFilter = IntentFilter()
+        intentFilter.addAction(CBluetoothAdapter.ACTION_DISCOVERY_STARTED)
+        intentFilter.addAction(CBluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         intentFilter.addAction(CBluetoothDevice.ACTION_FOUND) // 用BroadcastReceiver来取得搜索结果
         intentFilter.addAction(CBluetoothDevice.ACTION_BOND_STATE_CHANGED)
-        intentFilter.addAction(CBluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         owner.requireContext().registerReceiver(_broadcastReceiver, intentFilter)
     }
 
