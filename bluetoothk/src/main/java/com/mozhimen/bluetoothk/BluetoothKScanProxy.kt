@@ -94,11 +94,11 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
 
     @OptIn(OApiInit_InApplication::class)
     fun startScan(activity: Activity) {
-        if (BluetoothK.instance.getBluetoothAdapter() == null)
-            return
-        if (!BluetoothK.instance.isBluetoothEnabled())
-            BluetoothK.instance.getBluetoothAdapter()?.enable()
         BluetoothKUtil.requestBluetoothPermission(activity) {
+            if (BluetoothK.instance.getBluetoothAdapter() == null)
+                return@requestBluetoothPermission
+            if (!BluetoothK.instance.isBluetoothEnabled())
+                BluetoothK.instance.getBluetoothAdapter()?.enable()
             cancelScan()
             BluetoothK.instance.getBluetoothAdapter()?.startDiscovery()
         }

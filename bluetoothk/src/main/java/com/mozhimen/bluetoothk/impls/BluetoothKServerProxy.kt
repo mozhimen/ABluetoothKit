@@ -1,19 +1,12 @@
 package com.mozhimen.bluetoothk.impls
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
-import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.BluetoothK
-import com.mozhimen.bluetoothk.cons.CBluetoothK
+import com.mozhimen.bluetoothk.bases.BaseBluetoothKProxy
+import com.mozhimen.bluetoothk.bases.BaseBluetoothKThread
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.kotlin.utilk.java.io.flushClose
-import com.mozhimen.kotlin.utilk.java.util.UtilKUUID
 
 /**
  * @ClassName BluetoothKServerProxy
@@ -25,6 +18,11 @@ import com.mozhimen.kotlin.utilk.java.util.UtilKUUID
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKServerProxy : BaseWakeBefDestroyLifecycleObserver() {
-
+class BluetoothKServerProxy : BaseBluetoothKProxy() {
+    @OptIn(OApiInit_InApplication::class)
+    override fun getThread(): BaseBluetoothKThread? {
+        return if (BluetoothK.instance.getBluetoothAdapter() != null) {
+            BluetoothKServerThread(BluetoothK.instance.getBluetoothAdapter()!!, false, _onReadListener)
+        } else null
+    }
 }

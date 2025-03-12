@@ -33,18 +33,18 @@ object BluetoothKUtil {
     )
     fun requestBluetoothPermission(activity: Activity, onGranted: I_Listener) {
         if (UtilKBuildVersion.isAfterV_31_12_S()) {
-            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter31(activity.applicationContext)) {
+            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter31(activity)) {
                 onGranted.invoke()
             } else {
-                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after31(activity.applicationContext, onGranted, {
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after31(activity, onGranted, {
                     startForResult_ACTION_REQUEST_ENABLE(activity, onGranted)
                 })
             }
         } else if (UtilKBuildVersion.isAfterV_23_6_M()) {
-            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter23(activity.applicationContext)) {
+            if (XXPermissionsCheckUtil.hasPermission_BLUETOOTH_aftter23(activity)) {
                 onGranted.invoke()
             } else {
-                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after23(activity.applicationContext, onGranted, {
+                XXPermissionsRequestUtil.requestPermission_BLUETOOTH_after23(activity, onGranted, {
                     startForResult_ACTION_REQUEST_ENABLE(activity, onGranted)
                 })
             }
