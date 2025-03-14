@@ -1,7 +1,10 @@
 package com.mozhimen.bluetoothk.bases
 
+import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
+import com.mozhimen.bluetoothk.utils.BluetoothKUtil
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -38,13 +41,15 @@ abstract class BaseBluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
         }
     }
 
-    fun start() {
-        if (_thread != null) {
-            UtilKLogWrapper.d(TAG, "start: _thread != null")
-            return
+    fun start(activity: Activity) {
+        BluetoothKUtil.requestBluetoothPermission(activity) {
+            if (_thread != null) {
+                UtilKLogWrapper.d(TAG, "start: _thread != null")
+                return@requestBluetoothPermission
+            }
+            _thread = getThread()
+            _thread!!.start()
         }
-        _thread = getThread()
-        _thread!!.start()
     }
 
     fun stop() {
