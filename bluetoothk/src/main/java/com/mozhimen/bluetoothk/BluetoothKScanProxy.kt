@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.basick.utils.requireContext
 import com.mozhimen.bluetoothk.commons.IBluetoothKScanListener
+import com.mozhimen.bluetoothk.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.utils.BluetoothKUtil
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
+open class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy {
 
     private var _bluetoothKScanListener: IBluetoothKScanListener? = null
     private var _bluetoothDevices: ConcurrentHashMap<String, BluetoothDevice> = ConcurrentHashMap<String, BluetoothDevice>()
@@ -93,7 +94,7 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun startScan(activity: Activity) {
+    override fun startScan(activity: Activity) {
         BluetoothKUtil.requestBluetoothPermission(activity) {
             if (BluetoothK.instance.getBluetoothAdapter() == null)
                 return@requestBluetoothPermission
@@ -105,11 +106,11 @@ class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver() {
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun isScanning(): Boolean =
+    override fun isScanning(): Boolean =
         BluetoothK.instance.getBluetoothAdapter()?.isDiscovering == true
 
     @OptIn(OApiInit_InApplication::class)
-    fun cancelScan() {
+    override fun cancelScan() {
         if (isScanning()) {
             BluetoothK.instance.getBluetoothAdapter()?.cancelDiscovery()
         }

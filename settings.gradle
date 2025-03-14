@@ -74,3 +74,5 @@ include ':AXmlKit:vhk'
 include ':ANavigateKit'
 project(':ANavigateKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ANavigateKit")
 include ':ANavigateKit:start'
+include ':bluetoothk:ble'
+include ':bluetoothk:ble:test'

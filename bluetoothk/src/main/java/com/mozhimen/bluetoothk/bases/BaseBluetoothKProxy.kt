@@ -1,6 +1,5 @@
 package com.mozhimen.bluetoothk.bases
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.kotlin.elemk.commons.IA_Listener

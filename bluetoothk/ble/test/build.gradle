@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.test'
+    namespace 'com.mozhimen.bluetoothk.ble.test'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.mozhimen.bluetoothk.test"
+        applicationId "com.mozhimen.bluetoothk.ble.test"
         minSdk 21
-        targetSdk 34
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -40,7 +40,7 @@ dependencies {
     implementation project(':ASwiftKit:uik:databinding')
     implementation project(':AXmlKit_BaseRecyclerViewAdapterHelper:library')
     implementation project(':AXmlKit:vhk')
-    implementation project(':bluetoothk')
+    implementation project(':bluetoothk:ble')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
