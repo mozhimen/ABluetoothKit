@@ -43,6 +43,7 @@ open class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoo
             when (action) {
                 CBluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
                     UtilKLogWrapper.d(TAG, "onReceive: ACTION_DISCOVERY_STARTED")
+                    _bluetoothKScanListener?.onStart()
                 }
 
                 CBluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
@@ -117,7 +118,7 @@ open class BluetoothKScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoo
         _bluetoothDevices.clear()
     }
 
-    fun startBound(bluetoothDevice: BluetoothDevice) {
+    override fun startBound(bluetoothDevice: BluetoothDevice) {
         if (!_bluetoothDevices.contains(bluetoothDevice.address)) {
             _bluetoothDevices[bluetoothDevice.address] = bluetoothDevice
         }

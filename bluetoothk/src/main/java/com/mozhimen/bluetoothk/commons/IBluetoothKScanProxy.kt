@@ -1,6 +1,7 @@
 package com.mozhimen.bluetoothk.commons
 
 import android.app.Activity
+import android.bluetooth.BluetoothDevice
 
 /**
  * @ClassName IBluetoothKBleScanProxy
@@ -13,4 +14,5 @@ interface IBluetoothKScanProxy {
     fun startScan(activity: Activity)
     fun isScanning(): Boolean
     fun cancelScan()
+    fun startBound(bluetoothDevice: BluetoothDevice)
 }

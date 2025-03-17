@@ -16,7 +16,6 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 @OApiInit_InApplication
 class BluetoothKBle : BluetoothK() {
 
-    @RequiresApi(CVersCode.V_21_5_L)
     fun getBluetoothLeScanner(): BluetoothLeScanner? =
         getBluetoothAdapter()?.bluetoothLeScanner
 

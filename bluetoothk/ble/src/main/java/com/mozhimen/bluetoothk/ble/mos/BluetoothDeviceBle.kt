@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanResult
 import android.os.Parcel
 import android.os.Parcelable
+import com.mozhimen.kotlin.utilk.android.os.applyReadParcelable
 import java.io.Serializable
 
 /**
@@ -14,13 +15,13 @@ import java.io.Serializable
  * @Version 1.0
  */
 data class BluetoothDeviceBle(
-    val bluetoothDevice: BluetoothDevice,
-    val scanResult: ScanResult,
+    val bluetoothDevice: BluetoothDevice?,
+    val scanResult: ScanResult?,
 ) : Parcelable, Serializable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable(BluetoothDevice::class.java.classLoader)!!,
-        parcel.readParcelable(ScanResult::class.java.classLoader)!!
+        parcel.applyReadParcelable<BluetoothDevice>(),
+        parcel.applyReadParcelable<ScanResult>()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
