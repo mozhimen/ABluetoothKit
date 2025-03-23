@@ -15,4 +15,12 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
+    <!--BLE权限增加了BEL支持检查
+    (1).在manifest中添加权限-->
+    <!-- true 表示手机必须支持BLE，否则无法安装！
+        这里设为false, 运行后在Activity中检查-->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+
 </manifest>

@@ -22,7 +22,7 @@ class ServerActivity : BaseActivityVDBVM<ActivityServerBinding, ServerViewModel>
             setOnReadListener {
                 vm.liveData.postValue(it)
             }
-            start()
+            start(this@ServerActivity)
         }
         vdb.serverBtnWrite.setOnClickListener {
             val data = vdb.serverEditData.text.trim().toString()

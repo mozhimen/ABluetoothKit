@@ -9,6 +9,7 @@ import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.util.UtilKUUID
 import com.mozhimen.kotlin.utilk.kotlin.bytes2str
+import com.mozhimen.kotlin.utilk.kotlin.str2uUID
 
 
 /**
@@ -25,9 +26,9 @@ class BluetoothKClientThread : BaseBluetoothKThread {
         var bluetoothSocket: BluetoothSocket? = null
         try {
             bluetoothSocket = if (!clearText) {
-                bluetoothDevice.createRfcommSocketToServiceRecord(UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothDevice.createRfcommSocketToServiceRecord(CBluetoothK.UUID.str2uUID())
             } else {
-                bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothDevice.createInsecureRfcommSocketToServiceRecord(CBluetoothK.UUID.str2uUID())
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -43,9 +44,9 @@ class BluetoothKClientThread : BaseBluetoothKThread {
         var bluetoothSocket: BluetoothSocket? = null
         try {
             bluetoothSocket = if (!clearText) {
-                bluetoothDevice.createRfcommSocketToServiceRecord(UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothDevice.createRfcommSocketToServiceRecord(CBluetoothK.UUID.str2uUID())
             } else {
-                bluetoothDevice.createInsecureRfcommSocketToServiceRecord(UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothDevice.createInsecureRfcommSocketToServiceRecord(CBluetoothK.UUID.str2uUID())
             }
         } catch (e: Exception) {
             e.printStackTrace()

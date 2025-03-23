@@ -19,10 +19,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ABluetoothKit"
-include ':app'
-include ':deprecated'
-include ':bluetoothk'
-include ':bluetoothk:test'
 //ALibKit_Google
 include ':ALibKit_Google'
 project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
@@ -74,5 +70,11 @@ include ':AXmlKit:vhk'
 include ':ANavigateKit'
 project(':ANavigateKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ANavigateKit")
 include ':ANavigateKit:start'
+//
+include ':app'
+include ':deprecated'
+include ':bluetoothk'
+include ':bluetoothk:test'
 include ':bluetoothk:ble'
 include ':bluetoothk:ble:test'
+include ':scale:senssun'

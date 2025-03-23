@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
+import com.mozhimen.bluetoothk.commons.IBluetoothKProxy
 import com.mozhimen.bluetoothk.utils.BluetoothKUtil
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -21,7 +22,7 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-abstract class BaseBluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
+abstract class BaseBluetoothKProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy {
     protected var _onReadListener: IA_Listener<String>? = null
     private var _thread: BaseBluetoothKThread? = null
 
@@ -31,17 +32,17 @@ abstract class BaseBluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
 
     ///////////////////////////////////////////////////////////////////
 
-    fun setOnReadListener(listener: IA_Listener<String>) {
+    override fun setOnReadListener(listener: IA_Listener<String>) {
         _onReadListener = listener
     }
 
-    fun write(str: String) {
+    override fun write(str: String) {
         _thread?.write(str) ?: run {
             UtilKLogWrapper.e(TAG, "write: _thread is null")
         }
     }
 
-    fun start(activity: Activity) {
+    override fun start(activity: Activity) {
         BluetoothKUtil.requestBluetoothPermission(activity) {
             if (_thread != null) {
                 UtilKLogWrapper.d(TAG, "start: _thread != null")
@@ -52,7 +53,7 @@ abstract class BaseBluetoothKProxy : BaseWakeBefDestroyLifecycleObserver() {
         }
     }
 
-    fun stop() {
+    override fun stop() {
         _thread?.cancel()
         _thread?.interrupt()
         _thread = null

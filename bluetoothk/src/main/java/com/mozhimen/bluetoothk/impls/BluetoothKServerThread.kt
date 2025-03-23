@@ -8,6 +8,7 @@ import com.mozhimen.bluetoothk.cons.CBluetoothK
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.util.UtilKUUID
+import com.mozhimen.kotlin.utilk.kotlin.str2uUID
 
 
 /**
@@ -26,9 +27,9 @@ class BluetoothKServerThread : BaseBluetoothKThread {
         var bluetoothServerSocket: BluetoothServerSocket? = null
         try {
             bluetoothServerSocket = if (!clearText)
-                bluetoothAdapter.listenUsingRfcommWithServiceRecord(TAG, UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothAdapter.listenUsingRfcommWithServiceRecord(TAG, CBluetoothK.UUID.str2uUID())
             else
-                bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(TAG, UtilKUUID.get(CBluetoothK.UUID))
+                bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(TAG, CBluetoothK.UUID.str2uUID())
         } catch (e: Exception) {
             e.printStackTrace()
             UtilKLogWrapper.e(TAG, "constructor: createRfcommSocketToServiceRecord fail ${e.message}")

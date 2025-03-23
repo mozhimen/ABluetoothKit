@@ -1,19 +1,30 @@
 package com.mozhimen.bluetoothk.ble.impls
 
-import android.annotation.SuppressLint
+import android.app.Activity
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
-import android.bluetooth.BluetoothProfile
-import android.util.Log
-import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
+import com.mozhimen.bluetoothk.ble.BluetoothKBle
+import com.mozhimen.bluetoothk.ble.annors.AConnectState
+import com.mozhimen.bluetoothk.ble.cons.CBluetoothKBle
+import com.mozhimen.bluetoothk.commons.IBluetoothKProxy
+import com.mozhimen.bluetoothk.utils.BluetoothKUtil
+import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothGatt
+import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.java.util.uUID2str
+import com.mozhimen.kotlin.utilk.kotlin.bytes2str
+import com.mozhimen.kotlin.utilk.kotlin.str2bytes
+import com.mozhimen.kotlin.utilk.kotlin.str2uUID
 import java.util.UUID
 
 /**
@@ -26,153 +37,201 @@ import java.util.UUID
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBleClientProxy : BaseWakeBefDestroyLifecycleObserver() {
-    private var mBluetoothGatt: BluetoothGatt? = null
+class BluetoothKBleClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy {
+    private var _mac: String = ""
+    private var _bluetoothGatt: BluetoothGatt? = null
+    private var _onReadListener: IA_Listener<String>? = null
+    private var _bluetoothState: Int = AConnectState.STATE_DISCONNECTED
 
-    // 与服务端连接的Callback
-    @SuppressLint("MissingPermission")
-    var mBluetoothGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
+    private val _bluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            val dev = gatt.device
-            Log.i(TAG, String.format("onConnectionStateChange:%s,%s,%s,%s", dev.name, dev.address, status, newState))
-            if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
-                isConnected = true
-                gatt.discoverServices() //启动服务发现
+            UtilKLogWrapper.d(TAG, "onConnectionStateChange: name ${gatt.device.name} address ${gatt.device.address} status $status newState $newState")
+            UtilKLogWrapper.d(TAG, "onConnectionStateChange: ${if (status == 0) if (newState == 2) "连接成功" else "连接断开" else "连接出错, 错误码:$status"}")
+            if (/*status == CBluetoothGatt.GATT_SUCCESS && */newState == CBluetoothGatt.STATE_CONNECTED) {
+                UtilKLogWrapper.d(TAG, "onConnectionStateChange: connected")
+                gatt.discoverServices().also {
+                    _bluetoothState = AConnectState.STATE_CONNECTED
+                }//启动服务发现
             } else {
-                isConnected = false
-                closeConn()
-            }
-            logTv(String.format(if (status == 0) (if (newState == 2) "与[%s]连接成功" else "与[%s]连接断开") else ("与[%s]连接出错,错误码:$status"), dev))
-        }
-
-        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            Log.i(TAG, String.format("onServicesDiscovered:%s,%s,%s", gatt.device.name, gatt.device.address, status))
-            if (status == BluetoothGatt.GATT_SUCCESS) { //BLE服务发现成功
-                // 遍历获取BLE服务Services/Characteristics/Descriptors的全部UUID
-                for (service in gatt.services) {
-                    val allUUIDs = StringBuilder(
-                        """
-                            UUIDs={
-                            S=${service.uuid}
-                            """.trimIndent()
-                    )
-                    for (characteristic in service.characteristics) {
-                        allUUIDs.append(",\nC=").append(characteristic.uuid)
-                        for (descriptor in characteristic.descriptors) allUUIDs.append(",\nD=").append(descriptor.uuid)
-                    }
-                    allUUIDs.append("}")
-                    Log.i(TAG, "onServicesDiscovered:$allUUIDs")
-                    logTv("发现服务$allUUIDs")
+                UtilKLogWrapper.d(TAG, "onConnectionStateChange: connect fail")
+                stop().also {
+                    _bluetoothState = AConnectState.STATE_DISCONNECTED
                 }
             }
         }
 
+        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            UtilKLogWrapper.d(TAG, "onServicesDiscovered: name ${gatt.device.name} address ${gatt.device.address} status $status")
+            if (status == CBluetoothGatt.GATT_SUCCESS) { //BLE服务发现成功
+                // 遍历获取BLE服务Services/Characteristics/Descriptors的全部UUID
+                for (bluetoothGattService in gatt.services) {
+                    val allUUIDs = StringBuilder("UUIDs={S=${bluetoothGattService.uuid}")
+                    for (characteristic in bluetoothGattService.characteristics) {
+                        allUUIDs.append(",C=").append(characteristic.uuid)
+                        for (descriptor in characteristic.descriptors)
+                            allUUIDs.append(",D=").append(descriptor.uuid)
+                        //
+                        UtilKLogWrapper.d(TAG, "onConnectionStateChange: uuid:${characteristic.uuid}")
+                        if (characteristic.uuid.uUID2str() == CBluetoothKBle.UUID_SERVICE) {
+
+                        }
+                    }
+                    UtilKLogWrapper.d(TAG, "onConnectionStateChange: onServicesDiscovered:$allUUIDs")
+                    UtilKLogWrapper.d(TAG, "onConnectionStateChange: 发现服务$allUUIDs")
+                }
+                //enable notification
+                enableNotification()
+            }
+        }
+
+        private fun enableNotification() {
+            if (_bluetoothGatt == null) {
+                _bluetoothState = AConnectState.STATE_CONNECT_FAIL
+                return
+            }
+
+            // 获取蓝牙设备的特征
+            val bluetoothGattCharacteristic: BluetoothGattCharacteristic? = getBluetoothGattCharacteristic(CBluetoothKBle.UUID_CHARACTERISTIC_READ.str2uUID())
+            if (bluetoothGattCharacteristic == null) {
+                _bluetoothState = AConnectState.STATE_CONNECT_FAIL
+                return
+            }
+
+            // 获取蓝牙设备特征的描述符
+            val bluetoothGattDescriptor = bluetoothGattCharacteristic.getDescriptor(CBluetoothKBle.UUID_DESCRIPTOR.str2uUID()).apply {
+                setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+            }
+            if (_bluetoothGatt?.writeDescriptor(bluetoothGattDescriptor) == true) {
+                // 蓝牙设备在数据改变时，通知App，App在收到数据后回调onCharacteristicChanged方法
+                _bluetoothGatt?.setCharacteristicNotification(bluetoothGattCharacteristic, true)
+            }
+        }
+
+        @Deprecated("Deprecated in Java")
+        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+            val strUUID = characteristic.uuid.uUID2str()
+            val strValue = characteristic.value.bytes2str()
+            UtilKLogWrapper.d(TAG, "onCharacteristicChanged: name ${gatt.device.name} address ${gatt.device.address} strUUID $strUUID strValue $strValue")
+            UtilKLogWrapper.d("onCharacteristicChanged: 通知Characteristic[$strUUID]:$strValue")
+            if (strUUID == CBluetoothKBle.UUID_CHARACTERISTIC_READ) {
+                _onReadListener?.invoke(strValue)
+            }
+        }
+
+        @Deprecated("Deprecated in Java")
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            val uuid = characteristic.uuid
-            val valueStr = String(characteristic.value)
-            Log.i(TAG, String.format("onCharacteristicRead:%s,%s,%s,%s,%s", gatt.device.name, gatt.device.address, uuid, valueStr, status))
-            logTv("读取Characteristic[$uuid]:\n$valueStr")
+            val strUUID = characteristic.uuid.uUID2str()
+            val strValue = characteristic.value.bytes2str()
+            UtilKLogWrapper.d(TAG, "onCharacteristicRead: name ${gatt.device.name} address ${gatt.device.address} strUUID $strUUID strValue $strValue status $status")
+            UtilKLogWrapper.d("onCharacteristicRead: 读取Characteristic[$strUUID]:$strValue")
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            val uuid = characteristic.uuid
-            val valueStr = String(characteristic.value)
-            Log.i(TAG, String.format("onCharacteristicWrite:%s,%s,%s,%s,%s", gatt.device.name, gatt.device.address, uuid, valueStr, status))
-            logTv("写入Characteristic[$uuid]:\n$valueStr")
+            val strUUID = characteristic.uuid.uUID2str()
+            val strValue = characteristic.value.bytes2str()
+            UtilKLogWrapper.d(TAG, "onCharacteristicWrite: name ${gatt.device.name} address ${gatt.device.address} strUUID $strUUID strValue $strValue status $status")
+            UtilKLogWrapper.d("onCharacteristicWrite: 写入Characteristic[$strUUID]:$strValue")
         }
 
-        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            val uuid = characteristic.uuid
-            val valueStr = String(characteristic.value)
-            Log.i(TAG, String.format("onCharacteristicChanged:%s,%s,%s,%s", gatt.device.name, gatt.device.address, uuid, valueStr))
-            logTv("通知Characteristic[$uuid]:\n$valueStr")
-        }
-
+        @Deprecated("Deprecated in Java")
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            val uuid = descriptor.uuid
-            val valueStr = descriptor.value.contentToString()
-            Log.i(TAG, String.format("onDescriptorRead:%s,%s,%s,%s,%s", gatt.device.name, gatt.device.address, uuid, valueStr, status))
-            logTv("读取Descriptor[$uuid]:\n$valueStr")
+            val strUUID = descriptor.uuid.uUID2str()
+            val strValue = descriptor.value.contentToString()
+            UtilKLogWrapper.d(TAG, "onDescriptorRead: name ${gatt.device.name} address ${gatt.device.address} strUUID $strUUID strValue $strValue status $status")
+            UtilKLogWrapper.d("onDescriptorRead: 读取Descriptor[$strUUID]:$strValue")
         }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            val uuid = descriptor.uuid
-            val valueStr = descriptor.value.contentToString()
-            Log.i(TAG, String.format("onDescriptorWrite:%s,%s,%s,%s,%s", gatt.device.name, gatt.device.address, uuid, valueStr, status))
-            logTv("写入Descriptor[$uuid]:\n$valueStr")
+            val strUUID = descriptor.uuid.uUID2str()
+            val strValue = descriptor.value.contentToString()
+            UtilKLogWrapper.d(TAG, "onDescriptorWrite: name ${gatt.device.name} address ${gatt.device.address} strUUID $strUUID strValue $strValue status $status")
+            UtilKLogWrapper.d("onDescriptorWrite: 写入Descriptor[$strUUID]:$strValue")
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    fun setMac(mac: String) {
+        _mac = mac
+    }
+
+    override fun setOnReadListener(listener: IA_Listener<String>) {
+        _onReadListener = listener
+    }
+
+    @OptIn(OApiInit_InApplication::class)
+    override fun start(activity: Activity) {
+        BluetoothKUtil.requestBluetoothPermission(activity) {
+            if (BluetoothKBle.instance.getBluetoothAdapter() != null && _mac.isNotEmpty()) {
+                val bluetoothDevice: BluetoothDevice? = BluetoothKBle.instance.getBluetoothAdapter()!!.getRemoteDevice(_mac)
+                if (bluetoothDevice != null) {
+                    _bluetoothGatt = bluetoothDevice.connectGatt(_context, false, _bluetoothGattCallback).also {
+                        _bluetoothState = AConnectState.STATE_CONNECTING
+                    }
+                }
+            }
+        }
+    }
+
+    // 获取Gatt服务
+    fun getBluetoothGattService(uuid: UUID): BluetoothGattService? =
+        _bluetoothGatt?.getService(uuid)
+
+    fun getBluetoothGattCharacteristic(uuid: UUID): BluetoothGattCharacteristic? =
+        getBluetoothGattService(CBluetoothKBle.UUID_SERVICE.str2uUID())?.getCharacteristic(uuid)
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // 注意：连续频繁读写数据容易失败，读写操作间隔最好200ms以上，或等待上次回调完成后再进行下次读写操作！
+    // 读取数据成功会回调->onCharacteristicChanged()
+    fun read(): String {
+        val bluetoothGattCharacteristic = getBluetoothGattCharacteristic(CBluetoothKBle.UUID_CHARACTERISTIC_READ.str2uUID()) //通过UUID获取可读的Characteristic
+        if (bluetoothGattCharacteristic != null) {
+            _bluetoothGatt?.readCharacteristic(bluetoothGattCharacteristic)
+            return bluetoothGattCharacteristic.value?.bytes2str() ?: ""
+        }
+        return ""
+    }
+
+    // 注意：连续频繁读写数据容易失败，读写操作间隔最好200ms以上，或等待上次回调完成后再进行下次读写操作！
+    // 写入数据成功会回调->onCharacteristicWrite()
+    override fun write(str: String) {
+        val bluetoothGattCharacteristic = getBluetoothGattCharacteristic(CBluetoothKBle.UUID_CHARACTERISTIC_WRITE.str2uUID())//通过UUID获取可写的Characteristic
+        if (bluetoothGattCharacteristic != null) {
+            bluetoothGattCharacteristic.setValue(str.str2bytes()) //单次最多20个字节
+            _bluetoothGatt?.writeCharacteristic(bluetoothGattCharacteristic)
+        }
+    }
+
+    // BLE中心设备连接外围设备的数量有限(大概2~7个)，在建立新连接之前必须释放旧连接资源，否则容易出现连接错误133
+    override fun stop() {
+        _bluetoothGatt?.disconnect()
+        _bluetoothGatt?.close()
+        _bluetoothGatt = null
     }
 
     ///////////////////////////////////////////////////////////////////////////////
 
     override fun onDestroy(owner: LifecycleOwner) {
-        closeConn()
+        stop()
         super.onDestroy(owner)
     }
+
     ///////////////////////////////////////////////////////////////////////////////
-
-    // 扫描BLE
-    fun reScan(view: View?) {
-        if (mBleDevAdapter.isScanning) APP.toast("正在扫描...", 0)
-        else mBleDevAdapter.reScan()
-    }
-
-    // 注意：连续频繁读写数据容易失败，读写操作间隔最好200ms以上，或等待上次回调完成后再进行下次读写操作！
-    // 读取数据成功会回调->onCharacteristicChanged()
-    fun read(view: View?) {
-        val service = getGattService(BleServerActivity.UUID_SERVICE)
-        if (service != null) {
-            val characteristic = service.getCharacteristic(BleServerActivity.UUID_CHAR_READ_NOTIFY) //通过UUID获取可读的Characteristic
-            mBluetoothGatt!!.readCharacteristic(characteristic)
-        }
-    }
-
-    // 注意：连续频繁读写数据容易失败，读写操作间隔最好200ms以上，或等待上次回调完成后再进行下次读写操作！
-    // 写入数据成功会回调->onCharacteristicWrite()
-    fun write(view: View?) {
-        val service = getGattService(BleServerActivity.UUID_SERVICE)
-        if (service != null) {
-            val text = mWriteET!!.text.toString()
-            val characteristic = service.getCharacteristic(BleServerActivity.UUID_CHAR_WRITE) //通过UUID获取可写的Characteristic
-            characteristic.setValue(text.toByteArray()) //单次最多20个字节
-            mBluetoothGatt!!.writeCharacteristic(characteristic)
-        }
-    }
 
     // 设置通知Characteristic变化会回调->onCharacteristicChanged()
-    fun setNotify(view: View?) {
-        val service = getGattService(BleServerActivity.UUID_SERVICE)
-        if (service != null) {
-            // 设置Characteristic通知
-            val characteristic = service.getCharacteristic(BleServerActivity.UUID_CHAR_READ_NOTIFY) //通过UUID获取可通知的Characteristic
-            mBluetoothGatt!!.setCharacteristicNotification(characteristic, true)
-
-            // 向Characteristic的Descriptor属性写入通知开关，使蓝牙设备主动向手机发送数据
-            val descriptor = characteristic.getDescriptor(BleServerActivity.UUID_DESC_NOTITY)
-            // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);//和通知类似,但服务端不主动发数据,只指示客户端读取数据
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
-            mBluetoothGatt!!.writeDescriptor(descriptor)
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    // BLE中心设备连接外围设备的数量有限(大概2~7个)，在建立新连接之前必须释放旧连接资源，否则容易出现连接错误133
-    private fun closeConn() {
-        if (mBluetoothGatt != null) {
-            mBluetoothGatt!!.disconnect()
-            mBluetoothGatt!!.close()
-        }
-    }
-
-    // 获取Gatt服务
-    private fun getGattService(uuid: UUID): BluetoothGattService? {
-        if (!isConnected) {
-            APP.toast("没有连接", 0)
-            return null
-        }
-        val service = mBluetoothGatt!!.getService(uuid)
-        if (service == null) APP.toast("没有找到服务UUID=$uuid", 0)
-        return service
-    }
+//    fun notify() {
+//        val service = getBluetoothGattService(CBluetoothKBle.UUID_SERVICE.str2uUID())
+//        if (service != null) {
+//            // 设置Characteristic通知
+//            val characteristic = service.getCharacteristic(CBluetoothKBle.UUID_CHARACTERISTIC_READ.str2uUID()) //通过UUID获取可通知的Characteristic
+//            _bluetoothGatt?.setCharacteristicNotification(characteristic, true)
+//
+//            // 向Characteristic的Descriptor属性写入通知开关，使蓝牙设备主动向手机发送数据
+//            val descriptor = characteristic.getDescriptor(CBluetoothKBle.UUID_DESCRIPTOR.str2uUID())
+//            // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);//和通知类似,但服务端不主动发数据,只指示客户端读取数据
+//            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+//            _bluetoothGatt?.writeDescriptor(descriptor)
+//        }
+//    }
 }

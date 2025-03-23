@@ -56,7 +56,7 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
                 vdb.clientTxtAddress.text = address
                 _bluetoothKBleClientProxy.apply {
                     setMac(address)
-                    start()
+                    start(this@ClientActivity)
                 }
             }
         }

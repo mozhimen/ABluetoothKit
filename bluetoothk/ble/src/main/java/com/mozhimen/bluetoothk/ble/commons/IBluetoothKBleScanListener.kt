@@ -1,7 +1,9 @@
 package com.mozhimen.bluetoothk.ble.commons
 
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
 import android.bluetooth.le.ScanResult
+import com.mozhimen.bluetoothk.commons.IBluetoothKScanListener
 
 /**
  * @ClassName IBluetoothKBleScanListener
@@ -10,10 +12,8 @@ import android.bluetooth.le.ScanResult
  * @Date 2025/3/14
  * @Version 1.0
  */
-interface IBluetoothKBleScanListener {
-    fun onStart(){}
-    fun onFound(scanResult: ScanResult){}
-    fun onBonding(scanResult: ScanResult){}
-    fun onBonded(scanResult: ScanResult){}
-    fun onStop(){}
+interface IBluetoothKBleScanListener : IBluetoothKScanListener {
+    fun onFound(scanResult: ScanResult) {
+        onFound(scanResult.device)
+    }
 }
