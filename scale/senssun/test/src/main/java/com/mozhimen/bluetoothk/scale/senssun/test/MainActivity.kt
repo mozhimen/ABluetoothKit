@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.scale.senssun
+package com.mozhimen.bluetoothk.scale.senssun.test
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -24,9 +24,9 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.IDataAvailableListener
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.IServicesDiscoveredListener
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.LocalBinder
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.IDataAvailableListener
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.IServicesDiscoveredListener
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.LocalBinder
 //import com.mozhimen.bluetoothk.scale.senssun.userentities.UserInfo
 
 /**
@@ -36,7 +36,7 @@ import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.LocalBinder
  * @Date 2025/3/21
  * @Version 1.0
  */
-class BleController : AppCompatActivity(), View.OnClickListener, IServicesDiscoveredListener, IDataAvailableListener, AdapterView.OnItemClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, IServicesDiscoveredListener, IDataAvailableListener, AdapterView.OnItemClickListener {
     private var context: Context? = null
 
     private var openBt: Button? = null

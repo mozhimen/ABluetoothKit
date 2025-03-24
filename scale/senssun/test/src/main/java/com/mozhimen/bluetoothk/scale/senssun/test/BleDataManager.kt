@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.scale.senssun
+package com.mozhimen.bluetoothk.scale.senssun.test
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -11,9 +11,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.IConnectedListener
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.IDataAvailableListener
-import com.mozhimen.bluetoothk.scale.senssun.BluetoothLeService.IServicesDiscoveredListener
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.IConnectedListener
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.IDataAvailableListener
+import com.mozhimen.bluetoothk.scale.senssun.test.BluetoothLeService.IServicesDiscoveredListener
 //import com.mozhimen.bluetoothk.scale.senssun.userentities.UserInfo
 import java.util.UUID
 
@@ -317,6 +317,7 @@ class BleDataManager(context: Context?, bluetoothAdapter: BluetoothAdapter?) : I
     /**
      * 开始扫描
      */
+    @SuppressLint("MissingPermission")
     fun startScan(bluetoothAdapter: BluetoothAdapter?, enable: Boolean, iCallBackResult: ICallBackResult?) {
         if (enable) {
             // Stops scanning after a pre-defined scan period.
@@ -374,7 +375,7 @@ class BleDataManager(context: Context?, bluetoothAdapter: BluetoothAdapter?) : I
 
 
     private val mlLeScanCallback: BluetoothAdapter.LeScanCallback = object : BluetoothAdapter.LeScanCallback {
-        @SuppressLint("LongLogTag")
+        @SuppressLint("LongLogTag", "MissingPermission")
         override fun onLeScan(device: BluetoothDevice, rssi: Int, scanRecord: ByteArray) {
             if (device != null && !devices.contains(device)) {
                 if ((device.name != null) && device.name == "SENSSUN CLOUD") {
