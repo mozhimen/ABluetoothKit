@@ -32,9 +32,9 @@ android {
 
 dependencies {
     if (rootProject.name == "ABluetoothKit") {
-        implementation project(':basic')
+        api project(':basic')
     } else {
-        implementation project(':ABluetoothKit:basic')
+        api project(':ABluetoothKit:basic')
     }
     implementation project(':ASwiftKit:basick')
     implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')

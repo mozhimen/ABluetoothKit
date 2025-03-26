@@ -1,5 +1,6 @@
 package com.mozhimen.bluetoothk.classic
 
+import com.mozhimen.bluetoothk.basic.BluetoothKBasic
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 
@@ -11,7 +12,7 @@ import com.mozhimen.kotlin.utilk.commons.IUtilK
  * @Version 1.0
  */
 @OApiInit_InApplication
-open class BluetoothKClassic : IUtilK {
+open class BluetoothKClassic : BluetoothKBasic() {
     companion object {
         @JvmStatic
         val instance = INSTANCE.holder
