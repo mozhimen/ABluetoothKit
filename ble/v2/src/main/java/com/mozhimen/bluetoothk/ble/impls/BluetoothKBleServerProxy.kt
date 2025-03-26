@@ -24,6 +24,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.android.bluetooth.UtilKBluetoothManager
 import com.mozhimen.kotlin.utilk.android.content.UtilKContext
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.kotlin.bytes2str
@@ -167,7 +168,7 @@ class BluetoothKBleServerProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozh
 
                 // 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
                 // =============启动BLE蓝牙服务端=====================================================================================
-                val bluetoothManager = UtilKContext.getBluetoothManager(activity.applicationContext)
+                val bluetoothManager = UtilKBluetoothManager.get(activity.applicationContext)
                 val bluetoothGattService = BluetoothGattService(CBluetoothKBle.UUID_BLE_SERVICE.str2uUID(), BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
                 //添加可读+通知characteristic

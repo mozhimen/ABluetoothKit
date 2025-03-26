@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.ble2.exam'
+    namespace 'com.mozhimen.bluetoothk.ble.v1.exam'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.mozhimen.bluetoothk.ble2.exam'
+        applicationId 'com.mozhimen.bluetoothk.ble.v1.exam'
         minSdk 21
         targetSdk 34
         versionCode 1

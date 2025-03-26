@@ -4,11 +4,12 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.ble'
+    namespace 'com.mozhimen.bluetoothk.ble.androidx'
     compileSdk 34
 
     defaultConfig {
-        minSdk 21
+        minSdk 19
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        consumerProguardFiles "consumer-rules.pro"
@@ -30,12 +31,13 @@ android {
 }
 
 dependencies {
+    api project(':ALibKit_Jetpack:bluetooth')
+    implementation project(':ASwiftKit:basick')
     if (rootProject.name == "ABluetoothKit") {
         api project(':basic')
     } else {
         api project(':ABluetoothKit:basic')
     }
-    implementation project(':ASwiftKit:basick')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

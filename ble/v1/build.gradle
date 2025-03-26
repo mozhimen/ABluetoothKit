@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.ble'
+    namespace 'com.mozhimen.bluetoothk.ble.v1'
     compileSdk 34
 
     defaultConfig {
