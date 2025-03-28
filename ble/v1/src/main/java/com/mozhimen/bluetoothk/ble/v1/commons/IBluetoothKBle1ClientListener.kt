@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble.commons
+package com.mozhimen.bluetoothk.ble.v1.commons
 
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
@@ -11,7 +11,7 @@ import android.bluetooth.BluetoothGattDescriptor
  * @Date 2025/3/25
  * @Version 1.0
  */
-interface IBluetoothKBle2ClientListener {
+interface IBluetoothKBle1ClientListener {
     fun onDisConnected() {}
     fun onConnecting() {}
     fun onConnected() {}

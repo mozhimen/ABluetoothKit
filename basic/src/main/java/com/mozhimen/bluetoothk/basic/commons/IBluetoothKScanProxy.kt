@@ -14,5 +14,6 @@ interface IBluetoothKScanProxy {
     fun startScan(activity: Activity)
     fun isScanning(): Boolean
     fun cancelScan()
-    fun startBound(bluetoothDevice: BluetoothDevice)
+    fun startBound(bluetoothDevice: BluetoothDevice){}
+    fun cancelBound(){}
 }

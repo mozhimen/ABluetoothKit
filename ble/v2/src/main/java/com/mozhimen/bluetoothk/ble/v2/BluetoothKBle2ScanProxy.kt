@@ -1,11 +1,13 @@
-package com.mozhimen.bluetoothk.ble
+package com.mozhimen.bluetoothk.ble.v2
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
-import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
+import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
+import com.mozhimen.bluetoothk.ble.v2.commons.IBluetoothKBle2ScanListener
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -25,28 +27,28 @@ import kotlin.properties.Delegates
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy {
-    private var _bluetoothKBle2ScanListener: IBluetoothKScanListener? = null
+class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy {
+    private var _bluetoothKBleScanListener: IBluetoothKBle2ScanListener? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
         if (newValue)
-            _bluetoothKBle2ScanListener?.onStart()
+            _bluetoothKBleScanListener?.onStart()
         else
-            _bluetoothKBle2ScanListener?.onStop()
+            _bluetoothKBleScanListener?.onStop()
     }
 
-    private val _scanCallback: BluetoothAdapter.LeScanCallback = object : BluetoothAdapter.LeScanCallback {
-        override fun onLeScan(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
-            if (scanRecord != null && device != null) {
-                UtilKLogWrapper.d(TAG, "onScanResult: device $device rssi $rssi") // result.getScanRecord() 获取BLE广播数据
-                _bluetoothKBle2ScanListener?.onFound(device)
+    private val _scanCallback: ScanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            if (result.device != null) {
+                UtilKLogWrapper.d(TAG, "onScanResult: callbackType $callbackType result $result") // result.getScanRecord() 获取BLE广播数据
+                _bluetoothKBleScanListener?.onFound(result)
             }
         }
     }
 
     //////////////////////////////////////////////////////////////////////////
 
-    fun setBluetoothKScanListener(listener: IBluetoothKScanListener) {
-        _bluetoothKBle2ScanListener = listener
+    fun setBluetoothKBleScanListener(listener: IBluetoothKBle2ScanListener) {
+        _bluetoothKBleScanListener = listener
     }
 
     @OptIn(OApiInit_InApplication::class)
@@ -57,7 +59,7 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhi
             if (!BluetoothKBle2.instance.isBluetoothEnabled())
                 BluetoothKBle2.instance.getBluetoothAdapter()?.enable()
             cancelScan()
-            BluetoothKBle2.instance.getBluetoothAdapter()?.startLeScan(_scanCallback).also {
+            BluetoothKBle2.instance.getBluetoothLeScanner()?.startScan(_scanCallback).also {
                 _isScanning = true
             }
             UtilKHandlerWrapper.postDelayed(10000L) {
@@ -72,31 +74,31 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhi
     @OptIn(OApiInit_InApplication::class)
     override fun cancelScan() {
         if (isScanning()) {
-            BluetoothKBle2.instance.getBluetoothAdapter()?.stopLeScan(_scanCallback).also {
+            BluetoothKBle2.instance.getBluetoothLeScanner()?.stopScan(_scanCallback).also {
                 _isScanning = false
             }
         }
     }
 
-    override fun startBound(bluetoothDevice: BluetoothDevice) {
-        cancelBound()
-        _bluetoothKBle2ScanListener?.onBonded(bluetoothDevice)
+//    override fun startBound(bluetoothDevice: BluetoothDevice) {
+//        cancelBound()
+//        _bluetoothKBleScanListener?.onBonded(bluetoothDevice)
 //        _bluetoothGatt = bluetoothDevice.connectGatt(_context, false, _bluetoothGattCallback)
-    }
+//    }
 
-    fun cancelBound() {
+//    fun cancelBound() {
 //        _bluetoothGatt?.disconnect()
 //        _bluetoothGatt?.close()
 //        _bluetoothGatt = null
 //        _bluetoothKBleScanListener?.onStop()
-    }
+//    }
 
     //////////////////////////////////////////////////////////////////////////
 
     override fun onDestroy(owner: LifecycleOwner) {
         cancelBound()
         cancelScan()
-        _bluetoothKBle2ScanListener = null
+        _bluetoothKBleScanListener = null
         super.onDestroy(owner)
     }
 }

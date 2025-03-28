@@ -1,7 +1,5 @@
-package com.mozhimen.bluetoothk.ble
+package com.mozhimen.bluetoothk.ble.v1
 
-import android.bluetooth.le.BluetoothLeAdvertiser
-import android.bluetooth.le.BluetoothLeScanner
 import com.mozhimen.bluetoothk.basic.BluetoothKBasic
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 
@@ -13,13 +11,13 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
  * @Version 1.0
  */
 @OApiInit_InApplication
-class BluetoothKBle2 : BluetoothKBasic() {
+class BluetoothKBle1 : BluetoothKBasic() {
     companion object {
         @JvmStatic
         val instance = INSTANCE.holder
     }
 
     private object INSTANCE {
-        val holder = BluetoothKBle2()
+        val holder = BluetoothKBle1()
     }
 }

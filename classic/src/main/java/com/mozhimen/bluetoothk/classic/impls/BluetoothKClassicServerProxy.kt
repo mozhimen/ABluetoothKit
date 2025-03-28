@@ -18,11 +18,11 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class ClassicServerProxy : BaseClassicProxy() {
+class BluetoothKClassicServerProxy : BaseClassicProxy() {
     @OptIn(OApiInit_InApplication::class)
     override fun getThread(): BaseClassicThread? {
         return if (BluetoothKClassic.instance.getBluetoothAdapter() != null) {
-            ClassicServerThread(BluetoothKClassic.instance.getBluetoothAdapter()!!, false, _onReadListener)
+            BluetoothKClassicServerThread(BluetoothKClassic.instance.getBluetoothAdapter()!!, false, _onReadListener)
         } else null
     }
 }

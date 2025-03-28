@@ -17,7 +17,7 @@ import com.mozhimen.kotlin.utilk.kotlin.str2uUID
  * @Date 2025/3/11 21:28
  * @Version 1.0
  */
-class ClassicClientThread : BaseClassicThread {
+class BluetoothKClassicClientThread : BaseClassicThread {
 
     @JvmOverloads
     constructor(bluetoothDevice: BluetoothDevice, clearText: Boolean = false, onReadListener: IA_Listener<String>? = null) {

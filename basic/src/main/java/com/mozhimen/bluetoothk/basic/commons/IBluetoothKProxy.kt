@@ -10,8 +10,8 @@ import android.app.Activity
  * @Version 1.0
  */
 interface IBluetoothKProxy<I> {
-    fun setListener(listener: I)
-    fun start(activity: Activity)
-    fun write(str: String)
-    fun stop()
+    fun setListener(listener: I){}
+    fun start(activity: Activity){}
+    fun write(str: String){}
+    fun stop(){}
 }

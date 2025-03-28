@@ -1,7 +1,7 @@
 package com.mozhimen.bluetoothk.ble.test
 
 import android.os.Bundle
-import com.mozhimen.bluetoothk.ble.impls.BluetoothKBleServerProxy
+import com.mozhimen.bluetoothk.ble.v2.impls.BluetoothKBle2ServerProxy
 import com.mozhimen.bluetoothk.ble.test.databinding.ActivityServerBinding
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -11,7 +11,7 @@ import com.mozhimen.uik.databinding.bases.viewdatabinding.activity.BaseActivityV
 
 class ServerActivity : BaseActivityVDBVM<ActivityServerBinding, ServerViewModel>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
-    private val _bluetoothKServerProxy: BluetoothKBleServerProxy by lazy { BluetoothKBleServerProxy() }
+    private val _bluetoothKServerProxy: BluetoothKBle2ServerProxy by lazy { BluetoothKBle2ServerProxy() }
 
     ///////////////////////////////////////////////////////////////////////////////////
 

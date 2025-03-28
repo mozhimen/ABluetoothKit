@@ -2,7 +2,7 @@ package com.mozhimen.bluetoothk.ble2.test
 
 import android.content.Intent
 import android.os.Bundle
-import com.mozhimen.bluetoothk.ble.impls.BluetoothKBle2ClientProxy
+import com.mozhimen.bluetoothk.ble.v1.impls.BluetoothKBle1ClientProxy
 import com.mozhimen.bluetoothk.ble2.test.databinding.ActivityClientBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -19,13 +19,13 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
     ///////////////////////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
-    private val _bluetoothKBle2ClientProxy: BluetoothKBle2ClientProxy by lazy { BluetoothKBle2ClientProxy() }
+    private val _bluetoothKBle1ClientProxy: BluetoothKBle1ClientProxy by lazy { BluetoothKBle1ClientProxy() }
 
     ///////////////////////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initView(savedInstanceState: Bundle?) {
-        _bluetoothKBle2ClientProxy.apply {
+        _bluetoothKBle1ClientProxy.apply {
             bindLifecycle(this@ClientActivity)
             setListener {
                 vm.liveData.postValue(it)
@@ -37,7 +37,7 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
         vdb.clientBtnWrite.setOnClickListener {
             val data = vdb.clientEditData.text.trim().toString()
             if (data.isNotEmpty()) {
-                _bluetoothKBle2ClientProxy.write(data)
+                _bluetoothKBle1ClientProxy.write(data)
             }
         }
     }
@@ -54,7 +54,7 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
             val address = data?.getStringExtra(BluetoothActivity.EXTRA_BLUETOOTH_ADDRESS)
             if (!address.isNullOrEmpty()) {
                 vdb.clientTxtAddress.text = address
-                _bluetoothKBle2ClientProxy.apply {
+                _bluetoothKBle1ClientProxy.apply {
                     setMac(address)
                     start(this@ClientActivity)
                 }

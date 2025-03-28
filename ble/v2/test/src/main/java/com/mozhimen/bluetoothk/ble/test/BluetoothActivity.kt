@@ -2,7 +2,6 @@ package com.mozhimen.bluetoothk.ble.test
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
 import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.content.Intent
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.mozhimen.bluetoothk.ble.BluetoothKBle
 import com.mozhimen.bluetoothk.ble.BluetoothKBleScanProxy
-import com.mozhimen.bluetoothk.ble.commons.IBluetoothKBleScanListener
+import com.mozhimen.bluetoothk.ble.v2.commons.IBluetoothKBle2ScanListener
 import com.mozhimen.bluetoothk.ble.test.databinding.ActivityBluetoothBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -110,7 +109,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKBleScanProxy.apply {
-            setBluetoothKBleScanListener(object : IBluetoothKBleScanListener {
+            setBluetoothKBleScanListener(object : IBluetoothKBle2ScanListener {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onFound(scanResult: ScanResult) {
                     UtilKLogWrapper.d(TAG, "onFound: ${scanResult.device.address}")

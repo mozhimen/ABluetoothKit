@@ -18,7 +18,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class ClassicClientProxy : BaseClassicProxy() {
+class BluetoothKClassicClientProxy : BaseClassicProxy() {
 
     private var _mac: String? = null
 
@@ -29,7 +29,7 @@ class ClassicClientProxy : BaseClassicProxy() {
     @OptIn(OApiInit_InApplication::class)
     override fun getThread(): BaseClassicThread? {
         return if (BluetoothKClassic.instance.getBluetoothAdapter() != null && !_mac.isNullOrEmpty()) {
-            ClassicClientThread(BluetoothKClassic.instance.getBluetoothAdapter()!!, _mac!!, false, _onReadListener)
+            BluetoothKClassicClientThread(BluetoothKClassic.instance.getBluetoothAdapter()!!, _mac!!, false, _onReadListener)
         } else null
     }
 }

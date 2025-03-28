@@ -2,7 +2,7 @@ package com.mozhimen.bluetoothk.test
 
 import android.content.Intent
 import android.os.Bundle
-import com.mozhimen.bluetoothk.classic.impls.ClassicClientProxy
+import com.mozhimen.bluetoothk.classic.impls.BluetoothKClassicClientProxy
 import com.mozhimen.bluetoothk.test.databinding.ActivityClientBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -19,7 +19,7 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
     ///////////////////////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
-    private val _bluetoothKClientProxy: ClassicClientProxy by lazy { ClassicClientProxy() }
+    private val _bluetoothKClientProxy: BluetoothKClassicClientProxy by lazy { BluetoothKClassicClientProxy() }
 
     ///////////////////////////////////////////////////////////////////////////////////
 

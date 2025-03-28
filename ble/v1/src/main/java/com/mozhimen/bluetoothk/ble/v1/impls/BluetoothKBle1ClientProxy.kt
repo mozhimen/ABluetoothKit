@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble.impls
+package com.mozhimen.bluetoothk.ble.v1.impls
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -9,11 +9,11 @@ import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
-import com.mozhimen.bluetoothk.ble.BluetoothKBle2
+import com.mozhimen.bluetoothk.ble.v1.BluetoothKBle1
 import com.mozhimen.bluetoothk.basic.annors.AConnectState
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
-import com.mozhimen.bluetoothk.ble.commons.IBluetoothKBle2ClientListener
+import com.mozhimen.bluetoothk.ble.v1.commons.IBluetoothKBle1ClientListener
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothGatt
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -32,17 +32,17 @@ import java.util.UUID
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBle2ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IBluetoothKBle2ClientListener> {
+class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IBluetoothKBle1ClientListener> {
     private var _mac: String = ""
     private var _bluetoothGatt: BluetoothGatt? = null
-    private var _iBluetoothKBle2ClientListener: IBluetoothKBle2ClientListener? = null
+    private var _iBluetoothKBle1ClientListener: IBluetoothKBle1ClientListener? = null
     private var _bluetoothState: Int = AConnectState.STATE_DISCONNECTED
         set(value) {
             when (value) {
-                AConnectState.STATE_DISCONNECTED -> _iBluetoothKBle2ClientListener?.onDisConnected()
-                AConnectState.STATE_CONNECTING -> _iBluetoothKBle2ClientListener?.onConnecting()
-                AConnectState.STATE_CONNECTED -> _iBluetoothKBle2ClientListener?.onConnected()
-                AConnectState.STATE_CONNECT_FAIL -> _iBluetoothKBle2ClientListener?.onConnectFail()
+                AConnectState.STATE_DISCONNECTED -> _iBluetoothKBle1ClientListener?.onDisConnected()
+                AConnectState.STATE_CONNECTING -> _iBluetoothKBle1ClientListener?.onConnecting()
+                AConnectState.STATE_CONNECTED -> _iBluetoothKBle1ClientListener?.onConnected()
+                AConnectState.STATE_CONNECT_FAIL -> _iBluetoothKBle1ClientListener?.onConnectFail()
             }
             field = value
         }
@@ -67,31 +67,31 @@ class BluetoothKBle2ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             UtilKLogWrapper.d(TAG, "onServicesDiscovered: name ${gatt.device.name} address ${gatt.device.address} status $status")
             if (status == CBluetoothGatt.GATT_SUCCESS) { //BLE服务发现成功
-                _iBluetoothKBle2ClientListener?.onServicesDiscovered(gatt)
+                _iBluetoothKBle1ClientListener?.onServicesDiscovered(gatt)
             }
         }
 
         @Deprecated("Deprecated in Java")
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            _iBluetoothKBle2ClientListener?.onCharacteristicChanged(gatt, characteristic)
+            _iBluetoothKBle1ClientListener?.onCharacteristicChanged(gatt, characteristic)
         }
 
         @Deprecated("Deprecated in Java")
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            _iBluetoothKBle2ClientListener?.onCharacteristicRead(gatt, characteristic)
+            _iBluetoothKBle1ClientListener?.onCharacteristicRead(gatt, characteristic)
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            _iBluetoothKBle2ClientListener?.onCharacteristicWrite(gatt, characteristic)
+            _iBluetoothKBle1ClientListener?.onCharacteristicWrite(gatt, characteristic)
         }
 
         @Deprecated("Deprecated in Java")
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            _iBluetoothKBle2ClientListener?.onDescriptorRead(gatt, descriptor)
+            _iBluetoothKBle1ClientListener?.onDescriptorRead(gatt, descriptor)
         }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            _iBluetoothKBle2ClientListener?.onDescriptorWrite(gatt, descriptor)
+            _iBluetoothKBle1ClientListener?.onDescriptorWrite(gatt, descriptor)
         }
     }
 
@@ -107,15 +107,15 @@ class BluetoothKBle2ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    override fun setListener(listener: IBluetoothKBle2ClientListener) {
-        _iBluetoothKBle2ClientListener = listener
+    override fun setListener(listener: IBluetoothKBle1ClientListener) {
+        _iBluetoothKBle1ClientListener = listener
     }
 
     @OptIn(OApiInit_InApplication::class)
     override fun start(activity: Activity) {
         UtilBluetooth.requestBluetoothBlePermission(activity, onGranted = {
-            if (BluetoothKBle2.instance.getBluetoothAdapter() != null && _mac.isNotEmpty()) {
-                val bluetoothDevice: BluetoothDevice? = BluetoothKBle2.instance.getBluetoothAdapter()?.getRemoteDevice(_mac)
+            if (BluetoothKBle1.instance.getBluetoothAdapter() != null && _mac.isNotEmpty()) {
+                val bluetoothDevice: BluetoothDevice? = BluetoothKBle1.instance.getBluetoothAdapter()?.getRemoteDevice(_mac)
                 if (bluetoothDevice != null) {
                     _bluetoothGatt = bluetoothDevice.connectGatt(_context, false, _bluetoothGattCallback).also {
                         _bluetoothState = AConnectState.STATE_CONNECTING

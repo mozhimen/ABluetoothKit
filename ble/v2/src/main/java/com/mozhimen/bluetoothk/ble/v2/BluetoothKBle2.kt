@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble
+package com.mozhimen.bluetoothk.ble.v2
 
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.bluetooth.le.BluetoothLeScanner
@@ -13,7 +13,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
  * @Version 1.0
  */
 @OApiInit_InApplication
-open class BluetoothKBle : BluetoothKBasic() {
+open class BluetoothKBle2 : BluetoothKBasic() {
 
     fun getBluetoothLeScanner(): BluetoothLeScanner? =
         getBluetoothAdapter()?.bluetoothLeScanner
@@ -29,6 +29,6 @@ open class BluetoothKBle : BluetoothKBasic() {
     }
 
     private object INSTANCE {
-        val holder = BluetoothKBle()
+        val holder = BluetoothKBle2()
     }
 }

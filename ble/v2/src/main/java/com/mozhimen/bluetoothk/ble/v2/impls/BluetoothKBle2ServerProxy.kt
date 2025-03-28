@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble.impls
+package com.mozhimen.bluetoothk.ble.v2.impls
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -18,14 +18,13 @@ import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.ble.BluetoothKBle
 import com.mozhimen.bluetoothk.basic.annors.AConnectState
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
-import com.mozhimen.bluetoothk.ble.cons.CBluetoothKBle
+import com.mozhimen.bluetoothk.ble.v2.cons.CBluetoothKBle2
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.bluetooth.UtilKBluetoothManager
-import com.mozhimen.kotlin.utilk.android.content.UtilKContext
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.kotlin.bytes2str
 import com.mozhimen.kotlin.utilk.kotlin.str2uUID
@@ -40,7 +39,7 @@ import com.mozhimen.kotlin.utilk.kotlin.str2uUID
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBleServerProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy<IA_Listener<String>> {
+class BluetoothKBle2ServerProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy<IA_Listener<String>> {
     private var _mac: String = ""
     private var _bluetoothLeAdvertiser: BluetoothLeAdvertiser? = null // BLE广播
     private var _bluetoothGattServer: BluetoothGattServer? = null // BLE服务端
@@ -159,7 +158,7 @@ class BluetoothKBleServerProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozh
                 //扫描响应数据(可选，当客户端扫描时才发送)
                 val scanResponse = AdvertiseData.Builder()
                     .addManufacturerData(2, byteArrayOf(66, 66)) //设备厂商数据，自定义
-                    .addServiceUuid(ParcelUuid(CBluetoothKBle.UUID_BLE_SERVICE.str2uUID())) //服务UUID
+                    .addServiceUuid(ParcelUuid(CBluetoothKBle2.UUID_BLE_SERVICE.str2uUID())) //服务UUID
                     //                .addServiceData(new ParcelUuid(UUID_SERVICE), new byte[]{2}) //服务数据，自定义
                     .build()
                 _bluetoothLeAdvertiser!!.startAdvertising(advertiseSettings, advertiseData, scanResponse, _advertiseCallback).also {
@@ -169,18 +168,18 @@ class BluetoothKBleServerProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozh
                 // 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
                 // =============启动BLE蓝牙服务端=====================================================================================
                 val bluetoothManager = UtilKBluetoothManager.get(activity.applicationContext)
-                val bluetoothGattService = BluetoothGattService(CBluetoothKBle.UUID_BLE_SERVICE.str2uUID(), BluetoothGattService.SERVICE_TYPE_PRIMARY)
+                val bluetoothGattService = BluetoothGattService(CBluetoothKBle2.UUID_BLE_SERVICE.str2uUID(), BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
                 //添加可读+通知characteristic
                 bluetoothGattService.addCharacteristic(
-                    BluetoothGattCharacteristic(CBluetoothKBle.UUID_BLE_CHARACTERISTIC_READ.str2uUID(), BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY, BluetoothGattCharacteristic.PERMISSION_READ).apply {
-                        addDescriptor(BluetoothGattDescriptor(CBluetoothKBle.UUID_BLE_DESCRIPTOR.str2uUID(), BluetoothGattCharacteristic.PERMISSION_WRITE))
+                    BluetoothGattCharacteristic(CBluetoothKBle2.UUID_BLE_CHARACTERISTIC_READ.str2uUID(), BluetoothGattCharacteristic.PROPERTY_READ or BluetoothGattCharacteristic.PROPERTY_NOTIFY, BluetoothGattCharacteristic.PERMISSION_READ).apply {
+                        addDescriptor(BluetoothGattDescriptor(CBluetoothKBle2.UUID_BLE_DESCRIPTOR.str2uUID(), BluetoothGattCharacteristic.PERMISSION_WRITE))
                     }
                 )
 
                 //添加可写characteristic
                 bluetoothGattService.addCharacteristic(
-                    BluetoothGattCharacteristic(CBluetoothKBle.UUID_BLE_CHARACTERISTIC_WRITE.str2uUID(), BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE)
+                    BluetoothGattCharacteristic(CBluetoothKBle2.UUID_BLE_CHARACTERISTIC_WRITE.str2uUID(), BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE)
                 )
                 _bluetoothGattServer = bluetoothManager.openGattServer(activity.applicationContext, _bluetoothGattServerCallback)
                 _bluetoothGattServer!!.addService(bluetoothGattService)

@@ -17,7 +17,7 @@ import com.mozhimen.kotlin.utilk.kotlin.str2uUID
  * @Date 2025/3/11 21:28
  * @Version 1.0
  */
-class ClassicServerThread : BaseClassicThread {
+class BluetoothKClassicServerThread : BaseClassicThread {
 
     private var _bluetoothServerSocket: BluetoothServerSocket? = null
 
