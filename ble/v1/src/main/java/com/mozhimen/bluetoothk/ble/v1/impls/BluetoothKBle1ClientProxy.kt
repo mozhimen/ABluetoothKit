@@ -35,14 +35,14 @@ import java.util.UUID
 class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IBluetoothKBle1ClientListener> {
     private var _mac: String = ""
     private var _bluetoothGatt: BluetoothGatt? = null
-    private var _iBluetoothKBle1ClientListener: IBluetoothKBle1ClientListener? = null
+    private var _iBluetoothKBleClientListener: IBluetoothKBle1ClientListener? = null
     private var _bluetoothState: Int = AConnectState.STATE_DISCONNECTED
         set(value) {
             when (value) {
-                AConnectState.STATE_DISCONNECTED -> _iBluetoothKBle1ClientListener?.onDisConnected()
-                AConnectState.STATE_CONNECTING -> _iBluetoothKBle1ClientListener?.onConnecting()
-                AConnectState.STATE_CONNECTED -> _iBluetoothKBle1ClientListener?.onConnected()
-                AConnectState.STATE_CONNECT_FAIL -> _iBluetoothKBle1ClientListener?.onConnectFail()
+                AConnectState.STATE_DISCONNECTED -> _iBluetoothKBleClientListener?.onDisConnected()
+                AConnectState.STATE_CONNECTING -> _iBluetoothKBleClientListener?.onConnecting()
+                AConnectState.STATE_CONNECTED -> _iBluetoothKBleClientListener?.onConnected()
+                AConnectState.STATE_CONNECT_FAIL -> _iBluetoothKBleClientListener?.onConnectFail()
             }
             field = value
         }
@@ -67,33 +67,42 @@ class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             UtilKLogWrapper.d(TAG, "onServicesDiscovered: name ${gatt.device.name} address ${gatt.device.address} status $status")
             if (status == CBluetoothGatt.GATT_SUCCESS) { //BLE服务发现成功
-                _iBluetoothKBle1ClientListener?.onServicesDiscovered(gatt)
+                _iBluetoothKBleClientListener?.onServicesDiscovered(gatt)
             }
         }
 
         @Deprecated("Deprecated in Java")
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            _iBluetoothKBle1ClientListener?.onCharacteristicChanged(gatt, characteristic)
+            _iBluetoothKBleClientListener?.onCharacteristicChanged(gatt, characteristic)
         }
 
         @Deprecated("Deprecated in Java")
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            _iBluetoothKBle1ClientListener?.onCharacteristicRead(gatt, characteristic)
+            _iBluetoothKBleClientListener?.onCharacteristicRead(gatt, characteristic)
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            _iBluetoothKBle1ClientListener?.onCharacteristicWrite(gatt, characteristic)
+            _iBluetoothKBleClientListener?.onCharacteristicWrite(gatt, characteristic)
         }
 
         @Deprecated("Deprecated in Java")
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            _iBluetoothKBle1ClientListener?.onDescriptorRead(gatt, descriptor)
+            _iBluetoothKBleClientListener?.onDescriptorRead(gatt, descriptor)
         }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            _iBluetoothKBle1ClientListener?.onDescriptorWrite(gatt, descriptor)
+            _iBluetoothKBleClientListener?.onDescriptorWrite(gatt, descriptor)
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // 获取Gatt服务
+    fun getBluetoothGattService(uUID: UUID): BluetoothGattService? =
+        _bluetoothGatt?.getService(uUID)
+
+    fun getBluetoothGattCharacteristic(uUIDService: UUID, uUIDCharacteristic: UUID): BluetoothGattCharacteristic? =
+        getBluetoothGattService(uUIDService)?.getCharacteristic(uUIDCharacteristic)
 
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -101,14 +110,8 @@ class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
         _mac = mac
     }
 
-    // 获取Gatt服务
-    fun getBluetoothGattService(uuid: UUID): BluetoothGattService? =
-        _bluetoothGatt?.getService(uuid)
-
-    ///////////////////////////////////////////////////////////////////////////////
-
     override fun setListener(listener: IBluetoothKBle1ClientListener) {
-        _iBluetoothKBle1ClientListener = listener
+        _iBluetoothKBleClientListener = listener
     }
 
     @OptIn(OApiInit_InApplication::class)
@@ -125,10 +128,6 @@ class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
         })
     }
 
-    override fun write(str: String) {
-
-    }
-
     // BLE中心设备连接外围设备的数量有限(大概2~7个)，在建立新连接之前必须释放旧连接资源，否则容易出现连接错误133
     override fun stop() {
         _bluetoothGatt?.disconnect()
@@ -140,6 +139,7 @@ class BluetoothKBle1ClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
 
     override fun onDestroy(owner: LifecycleOwner) {
         stop()
+        _iBluetoothKBleClientListener = null
         super.onDestroy(owner)
     }
 }

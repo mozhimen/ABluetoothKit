@@ -30,12 +30,12 @@ android {
 }
 
 dependencies {
+    implementation project(':ASwiftKit:basick')
     if (rootProject.name == "ABluetoothKit") {
         api project(':basic')
     } else {
         api project(':ABluetoothKit:basic')
     }
-    implementation project(':ASwiftKit:basick')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

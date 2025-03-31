@@ -50,16 +50,15 @@ class BluetoothKBleX {
     fun getGattClientScope(mac: String): GattClientScope? =
         _gattClientScopes[mac]
 
-    fun getGattService(mac: String, uUID: UUID): GattService? =
+    fun getGattService(mac: String, characteristicsUUID: UUID): GattService? =
         getGattClientScope(mac)?.services?.find { service ->
             service.characteristics.find { characteristic ->
-                characteristic.uuid.uUID2str() == uUID.uUID2str()
+                characteristic.uuid.uUID2str() == characteristicsUUID.uUID2str()
             } != null
         }
 
-    fun getGattCharacteristic(mac: String, uUID: UUID): GattCharacteristic? =
-        getGattService(mac, uUID)?.getCharacteristic(uUID)
-
+    fun getGattCharacteristic(mac: String, characteristicsUUID: UUID): GattCharacteristic? =
+        getGattService(mac, characteristicsUUID)?.getCharacteristic(characteristicsUUID)
 
     //////////////////////////////////////////////////////////////////////////
 

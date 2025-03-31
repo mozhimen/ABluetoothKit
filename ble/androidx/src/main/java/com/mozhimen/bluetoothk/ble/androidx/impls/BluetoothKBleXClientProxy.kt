@@ -32,6 +32,11 @@ class BluetoothKBleXClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
 
     ///////////////////////////////////////////////////////////////////////////////
 
+    fun getGattClientScope(): GattClientScope? =
+        BluetoothKBleX.instance.getGattClientScope(_mac)
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     fun setMac(mac: String) {
         _mac = mac
     }

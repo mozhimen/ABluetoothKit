@@ -3,7 +3,9 @@ package com.mozhimen.bluetoothk.ble.v2
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
@@ -39,13 +41,39 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
     private val _scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             if (result.device != null) {
-                UtilKLogWrapper.d(TAG, "onScanResult: callbackType $callbackType result $result") // result.getScanRecord() 获取BLE广播数据
+                val device = result.device
+                val name = device.name ?: "Unknown"
+                val address = device.address
+                val rssi = result.rssi
+                UtilKLogWrapper.d(TAG, "onScanResult: name名称:$name address地址:$address rssi信号强度:$rssi") // result.getScanRecord() 获取BLE广播数据
                 _bluetoothKBleScanListener?.onFound(result)
+                // 在此处处理扫描到的设备信息，如添加到列表、更新UI等
             }
         }
+
+        override fun onBatchScanResults(results: MutableList<ScanResult>) {
+            super.onBatchScanResults(results)
+            // 如果需要处理批量扫描结果，可以在此处进行
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            // 根据错误码处理扫描失败情况
+            UtilKLogWrapper.e(TAG, "onScanFailed: BLE扫描失败，错误代码: $errorCode")
+        }
     }
+    private var _scanFilters: List<ScanFilter>? = null
+    private var _scanSettings: ScanSettings = ScanSettings.Builder().build()
 
     //////////////////////////////////////////////////////////////////////////
+
+    fun setScanFilters(scanFilters: List<ScanFilter>) {
+        _scanFilters = scanFilters
+    }
+
+    fun setScanSettings(scanSettings: ScanSettings) {
+        _scanSettings = scanSettings
+    }
 
     fun setBluetoothKBleScanListener(listener: IBluetoothKBle2ScanListener) {
         _bluetoothKBleScanListener = listener
@@ -59,7 +87,7 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
             if (!BluetoothKBle2.instance.isBluetoothEnabled())
                 BluetoothKBle2.instance.getBluetoothAdapter()?.enable()
             cancelScan()
-            BluetoothKBle2.instance.getBluetoothLeScanner()?.startScan(_scanCallback).also {
+            BluetoothKBle2.instance.getBluetoothLeScanner()?.startScan(_scanFilters, _scanSettings, _scanCallback).also {
                 _isScanning = true
             }
             UtilKHandlerWrapper.postDelayed(10000L) {

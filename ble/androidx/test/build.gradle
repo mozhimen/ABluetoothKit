@@ -1,23 +1,27 @@
 plugins {
-    id 'com.android.library'
+    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.ble.v1'
+    namespace 'com.mozhimen.bluetoothk.androidx.test'
     compileSdk 34
 
     defaultConfig {
-        minSdk 19
+        applicationId "com.mozhimen.bluetoothk.androidx.test"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -27,15 +31,16 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures{
+        dataBinding true
+    }
 }
 
 dependencies {
-    implementation project(':ASwiftKit:basick')
-    if (rootProject.name == "ABluetoothKit") {
-        api project(':basic')
-    } else {
-        api project(':ABluetoothKit:basic')
-    }
+    implementation project(':ASwiftKit:uik:databinding')
+    implementation project(':ble:androidx')
+    implementation project(':AXmlKit:vhk')
+    implementation project(':AXmlKit_BaseRecyclerViewAdapterHelper:library')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
