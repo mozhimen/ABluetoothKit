@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
+import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -26,8 +27,8 @@ import kotlin.properties.Delegates
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBle1ScanProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy {
-    private var _bluetoothKBleScanListener: IBluetoothKScanListener? = null
+class BluetoothKBle1ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice> {
+    private var _bluetoothKBleScanListener: IBluetoothKScanListener<BluetoothDevice>? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
         if (newValue)
             _bluetoothKBleScanListener?.onStart()
@@ -51,7 +52,7 @@ class BluetoothKBle1ScanProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhi
         _serviceUuids = serviceUuids
     }
 
-    fun setBluetoothKBleScanListener(listener: IBluetoothKScanListener) {
+    fun setBluetoothKBleScanListener(listener: IBluetoothKScanListener<BluetoothDevice>) {
         _bluetoothKBleScanListener = listener
     }
 

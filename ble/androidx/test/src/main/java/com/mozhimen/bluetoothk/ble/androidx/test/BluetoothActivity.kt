@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.androidx.test
+package com.mozhimen.bluetoothk.ble.androidx.test
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,20 +6,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.bluetooth.BluetoothDevice
 import androidx.bluetooth.ScanResult
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
-import com.mozhimen.bluetoothk.androidx.test.databinding.ActivityBluetoothBinding
+import com.mozhimen.bluetoothk.ble.androidx.test.databinding.ActivityBluetoothBinding
+import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
 import com.mozhimen.bluetoothk.ble.androidx.BluetoothKBleXScanProxy
-import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXScanListener
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.utilk.android.bluetooth.isBondState_BOND_BONDED
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.kotlin.collections.containsBy
 import com.mozhimen.kotlin.utilk.kotlin.ifNotEmptyOr
@@ -36,6 +34,7 @@ import com.mozhimen.xmlk.vhk.VHKLifecycle2
 class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     companion object {
         const val EXTRA_BLUETOOTH_ADDRESS = "EXTRA_BLUETOOTH_ADDRESS"
+        const val REQUEST_CODE_BLUETOOTH = 1001
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -70,22 +69,15 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    @OptIn(OApiInit_InApplication::class, OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
+    @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     @SuppressLint("MissingPermission")
     override fun initView(savedInstanceState: Bundle?) {
         vdb.recyHistory.setLayoutManager(LinearLayoutManager(this))
         vdb.recyHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         vdb.recyHistory.setAdapter(_baseQuickAdapter)
-        _baseQuickAdapter.setOnItemClickListener(BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-//            if (_scanResults[position].isBondState_BOND_BONDED()) {
-//                setResult(CActivity.RESULT_OK, Intent().apply {
-//                    putExtra(EXTRA_BLUETOOTH_ADDRESS, _scanResults[position].address)
-//                })
-//                finish()
-//            } else {
-//                _bluetoothKBle2ScanProxy.startBound(_scanResults[position])
-//            }
-        })
+        _baseQuickAdapter.setOnItemClickListener { _, _, position ->
+            _bluetoothKBleXScanProxy.startBound(this, _scanResults[position])
+        }
         vdb.swipeRefresh.setColorSchemeResources(R.color.black)
         vdb.swipeRefresh.setOnRefreshListener {
             startScan()
@@ -95,21 +87,21 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKBleXScanProxy.apply {
-            setBluetoothKBleScanListener(object : IBluetoothKBleXScanListener {
+            setBluetoothKBleScanListener(object : IBluetoothKScanListener<ScanResult> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onFound(scanResult: androidx.bluetooth.ScanResult) {
-                    UtilKLogWrapper.d(TAG, "onFound: ${scanResult.device.address}")
-                    if (_scanResults.containsBy { it.address == scanResult.device.address })
+                    UtilKLogWrapper.d(TAG, "onFound: ${scanResult.deviceAddress.address}")
+                    if (_scanResults.containsBy { it.deviceAddress.address == scanResult.deviceAddress.address })
                         return
-                    _scanResults.add(scanResult.device)
+                    _scanResults.add(scanResult)
                     _baseQuickAdapter.notifyDataSetChanged()
                     if (vdb.swipeRefresh.isRefreshing)
                         vdb.swipeRefresh.isRefreshing = false
                 }
 
-                override fun onBonded(bluetoothDevice: BluetoothDevice) {
+                override fun onBonded(scanResult: ScanResult) {
                     setResult(CActivity.RESULT_OK, Intent().apply {
-                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice.address)
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, scanResult.deviceAddress.address)
                     })
                     finish()
                 }
@@ -129,6 +121,6 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     private fun startScan() {
         _scanResults.clear()
         _baseQuickAdapter.notifyDataSetChanged()
-        _bluetoothKBle2ScanProxy.startScan(this)
+        _bluetoothKBleXScanProxy.startScan(this)
     }
 }

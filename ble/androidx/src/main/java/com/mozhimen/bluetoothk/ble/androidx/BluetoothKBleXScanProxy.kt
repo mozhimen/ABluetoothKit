@@ -1,15 +1,16 @@
 package com.mozhimen.bluetoothk.ble.androidx
 
 import android.app.Activity
+import android.bluetooth.BluetoothDevice
 import androidx.bluetooth.BluetoothLe
 import androidx.bluetooth.ScanFilter
 import androidx.bluetooth.ScanResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
+import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
-import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXScanListener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
@@ -28,9 +29,9 @@ import kotlin.properties.Delegates
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy {
+class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<ScanResult> {
     private var _scanJob: Job? = null
-    private var _bluetoothKBleScanListener: IBluetoothKBleXScanListener? = null
+    private var _bluetoothKBleScanListener: IBluetoothKScanListener<ScanResult>? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
         if (newValue)
             _bluetoothKBleScanListener?.onStart()
@@ -45,7 +46,7 @@ class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
         _scanFilters = scanFilters
     }
 
-    fun setBluetoothKBleScanListener(listener: IBluetoothKBleXScanListener) {
+    fun setBluetoothKBleScanListener(listener: IBluetoothKScanListener<ScanResult>) {
         _bluetoothKBleScanListener = listener
     }
 
@@ -79,12 +80,19 @@ class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
         }
     }
 
+    override fun startBound(activity: Activity, obj: ScanResult) {
+        _bluetoothKBleScanListener?.onBonding(obj)
+        BluetoothKBleX.instance.connect(obj.deviceAddress.address, activity) {
+            _bluetoothKBleScanListener?.onBonded(obj)
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////////
 
     override fun onDestroy(owner: LifecycleOwner) {
+        _bluetoothKBleScanListener = null
         cancelBound()
         cancelScan()
-        _bluetoothKBleScanListener = null
         super.onDestroy(owner)
     }
 }

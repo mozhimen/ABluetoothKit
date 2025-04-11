@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.bluetoothk.androidx.test'
+    namespace 'com.mozhimen.bluetoothk.ble.androidx.test'
     compileSdk 34
 
     defaultConfig {

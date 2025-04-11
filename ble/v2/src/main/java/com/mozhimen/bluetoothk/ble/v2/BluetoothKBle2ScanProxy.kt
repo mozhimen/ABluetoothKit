@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy {
+class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice> {
     private var _bluetoothKBleScanListener: IBluetoothKBle2ScanListener? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
         if (newValue)

@@ -11,7 +11,3 @@ import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
  * @Date 2025/3/26 20:49
  * @Version 1.0
  */
-interface IBluetoothKBleXScanListener :IBluetoothKScanListener{
-    fun onFound(scanResult: ScanResult) {
-    }
-}

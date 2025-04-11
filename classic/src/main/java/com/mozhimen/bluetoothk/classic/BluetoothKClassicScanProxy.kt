@@ -32,9 +32,9 @@ import java.util.concurrent.ConcurrentHashMap
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy {
+open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice> {
 
-    private var _bluetoothKScanListener: IBluetoothKScanListener? = null
+    private var _bluetoothKScanListener: IBluetoothKScanListener<BluetoothDevice>? = null
     private var _bluetoothDevices: ConcurrentHashMap<String, BluetoothDevice> = ConcurrentHashMap<String, BluetoothDevice>()
 
     private val _broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -90,7 +90,7 @@ open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), I
 
     //////////////////////////////////////////////////////////////////////////
 
-    fun setBluetoothKScanListener(listener: IBluetoothKScanListener) {
+    fun setBluetoothKScanListener(listener: IBluetoothKScanListener<BluetoothDevice>) {
         _bluetoothKScanListener = listener
     }
 
@@ -118,7 +118,7 @@ open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), I
         _bluetoothDevices.clear()
     }
 
-    override fun startBound(bluetoothDevice: BluetoothDevice) {
+    override fun startBound(activity: Activity, bluetoothDevice: BluetoothDevice) {
         if (!_bluetoothDevices.contains(bluetoothDevice.address)) {
             _bluetoothDevices[bluetoothDevice.address] = bluetoothDevice
         }

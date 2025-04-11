@@ -96,7 +96,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
                 })
                 finish()
             } else {
-                _bluetoothKClassicScanProxy.startBound(_bluetoothDevices[position])
+                _bluetoothKClassicScanProxy.startBound(this, _bluetoothDevices[position])
             }
         })
         vdb.swipeRefresh.setColorSchemeResources(R.color.black)
@@ -108,7 +108,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKClassicScanProxy.apply {
-            setBluetoothKScanListener(object : com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener {
+            setBluetoothKScanListener(object : com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener<BluetoothDevice> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onFound(bluetoothDevice: BluetoothDevice) {
                     UtilKLogWrapper.d(TAG, "onFound: ${bluetoothDevice.address}")
