@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.mozhimen.bluetoothk.ble2.test'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.mozhimen.bluetoothk.ble.v1.test"
