@@ -6,13 +6,13 @@
     <data >
         <variable
             name="vm"
-            type="com.mozhimen.bluetoothk.ble2.test.ClientViewModel" />
+            type="com.mozhimen.bluetoothk.ble.v1.test.ClientViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.mozhimen.bluetoothk.ble2.test.ClientActivity">
+        tools:context=".ClientActivity">
 
         <TextView
             android:id="@+id/client_txt_address"

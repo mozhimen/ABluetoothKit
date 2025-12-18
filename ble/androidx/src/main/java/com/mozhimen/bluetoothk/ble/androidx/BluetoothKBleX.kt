@@ -39,7 +39,7 @@ class BluetoothKBleX : IUtilK {
     private var _connectJobs: ConcurrentHashMap<String, Job> = ConcurrentHashMap<String, Job>()
     private var _gattClientScopes: ConcurrentHashMap<String, GattClientScope> = ConcurrentHashMap<String, GattClientScope>()
     private val _subscribeFlows: ConcurrentHashMap<String, Flow<ByteArray>?> = ConcurrentHashMap<String, Flow<ByteArray>?>()
-    private val _iBluetoothKXClientListeners: ConcurrentHashMap<String, LinkedList<IBluetoothKXClientListener>> =
+    private val _bluetoothKXClientListeners: ConcurrentHashMap<String, LinkedList<IBluetoothKXClientListener>> =
         ConcurrentHashMap<String, LinkedList<IBluetoothKXClientListener>>()
 
     //////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ class BluetoothKBleX : IUtilK {
         _subscribeFlows[mac + uUIDService + uUIDCharacteristics]
 
     fun getIBluetoothKXClientListener(mac: String): LinkedList<IBluetoothKXClientListener>? =
-        _iBluetoothKXClientListeners[mac]
+        _bluetoothKXClientListeners[mac]
 
     fun getScanResult(mac: String): ScanResult? =
         _scanResults[mac]
@@ -88,7 +88,7 @@ class BluetoothKBleX : IUtilK {
         var list = getIBluetoothKXClientListener(mac)
         if (list == null) {
             list = LinkedList()
-            _iBluetoothKXClientListeners[mac] = list
+            _bluetoothKXClientListeners[mac] = list
             UtilKLogWrapper.d(TAG, "addIBluetoothKXClientListener: ")
         }
         if (!getIBluetoothKXClientListener(mac)!!.contains(listener)) {
@@ -113,7 +113,7 @@ class BluetoothKBleX : IUtilK {
     }
 
     fun removeIBluetoothKXClientListeners(mac: String): LinkedList<IBluetoothKXClientListener>? =
-        _iBluetoothKXClientListeners.remove(mac)
+        _bluetoothKXClientListeners.remove(mac)
 
     fun removeIBluetoothKXClientListener(mac: String, listener: IBluetoothKXClientListener): Boolean? =
         getIBluetoothKXClientListener(mac)?.remove(listener)
@@ -164,10 +164,10 @@ class BluetoothKBleX : IUtilK {
             i.value.cancel()
         }
         _connectJobs.clear()
-        for (j in _iBluetoothKXClientListeners) {
+        for (j in _bluetoothKXClientListeners) {
             j.value.forEach { it.onDisConnected() }
         }
-        _iBluetoothKXClientListeners.clear()
+        _bluetoothKXClientListeners.clear()
     }
 
     //////////////////////////////////////////////////////////////////////////

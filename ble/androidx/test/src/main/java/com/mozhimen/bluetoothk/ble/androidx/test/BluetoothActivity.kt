@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.mozhimen.bluetoothk.ble.androidx.test.databinding.ActivityBluetoothBinding
-import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
-import com.mozhimen.bluetoothk.ble.androidx.BluetoothKBleXScanProxy
+import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXScanListener
+import com.mozhimen.bluetoothk.ble.androidx.impls.BluetoothKBleXScanProxy
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.kotlin.collections.containsBy
 import com.mozhimen.kotlin.utilk.kotlin.ifNotEmptyOr
@@ -87,21 +86,21 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKBleXScanProxy.apply {
-            setBluetoothKBleScanListener(object : IBluetoothKScanListener<ScanResult> {
+            setBluetoothKBleScanListener(object : IBluetoothKBleXScanListener {
                 @SuppressLint("NotifyDataSetChanged")
-                override fun onFound(scanResult: androidx.bluetooth.ScanResult) {
-                    UtilKLogWrapper.d(TAG, "onFound: ${scanResult.deviceAddress.address}")
-                    if (_scanResults.containsBy { it.deviceAddress.address == scanResult.deviceAddress.address })
+                override fun onFound(obj: ScanResult) {
+                    UtilKLogWrapper.d(TAG, "onFound: ${obj.deviceAddress.address}")
+                    if (_scanResults.containsBy { it.deviceAddress.address == obj.deviceAddress.address })
                         return
-                    _scanResults.add(scanResult)
+                    _scanResults.add(obj)
                     _baseQuickAdapter.notifyDataSetChanged()
                     if (vdb.swipeRefresh.isRefreshing)
                         vdb.swipeRefresh.isRefreshing = false
                 }
 
-                override fun onBonded(scanResult: ScanResult) {
+                override fun onBonded(obj: ScanResult) {
                     setResult(CActivity.RESULT_OK, Intent().apply {
-                        putExtra(EXTRA_BLUETOOTH_ADDRESS, scanResult.deviceAddress.address)
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, obj.deviceAddress.address)
                     })
                     finish()
                 }

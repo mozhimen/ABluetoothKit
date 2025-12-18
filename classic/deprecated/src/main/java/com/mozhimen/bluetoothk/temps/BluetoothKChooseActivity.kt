@@ -16,17 +16,17 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
-import com.mozhimen.kotlin.elemk.android.bluetooth.CBluetoothDevice
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
-import com.mozhimen.kotlin.elemk.kotlin.properties.VarProperty_Set
-import com.mozhimen.kotlin.stackk.monitor.StackMonitor
-import com.mozhimen.kotlin.utilk.android.util.it
-import com.mozhimen.kotlin.utilk.android.util.wt
 import com.mozhimen.kotlin.utilk.android.widget.showToast
 import com.mozhimen.bluetoothk.R
 import com.mozhimen.bluetoothk.cons.CBluetoothKCons
 import com.mozhimen.bluetoothk.cons.EBluetoothKState
+import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
+import com.mozhimen.kotlin.elemk.kotlin.impls.properties.VarProperty_Set
+import com.mozhimen.kotlin.utilk.android.util.i
+import com.mozhimen.kotlin.utilk.android.util.w
 import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.stackk.monitor.StackKMonitor
 
 /**
  * @ClassName BluetoothKChooseActivity
@@ -82,7 +82,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
                     val s = deviceName + "\n" + bluetoothDevice.address
                     if (!_foundedDevices.contains(s) && bluetoothDevice.name.isNotEmpty()) {
                         _foundedDevices.add(bluetoothDevice.name + "\n" + bluetoothDevice.address)// Add the name and address to an array adapter to show in a ListView
-                        "onReceive: name ${bluetoothDevice.name} address ${bluetoothDevice.address}".wt(TAG)
+                        "onReceive: name ${bluetoothDevice.name} address ${bluetoothDevice.address}".w(TAG)
                         _bluetoothKDevicesAdapter!!.notifyDataSetChanged()
                     }
                 }
@@ -106,7 +106,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setDisplayShowHomeEnabled(true)
         }
-        StackMonitor.instance.pushActivity(this)
+        StackKMonitor.instance.pushActivity(this)
 
         _callbackKey = intent.getStringExtra(CBluetoothKCons.EXTRA_CALLBACK_KEY)
 
@@ -118,7 +118,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
         _bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (_bluetoothAdapter == null) {
             "获取蓝牙适配器失败".showToast()
-            StackMonitor.instance.popAllActivity()
+            StackKMonitor.instance.popAllActivity()
         }
         checkBluetoothIsEnable()
         initData()
@@ -142,7 +142,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
                     _pairedDevices.add("${device.name}\n${device.address}")
                 }
             }
-            "initData: pairedDevices $pairedDevices".it(TAG)
+            "initData: pairedDevices $pairedDevices".i(TAG)
         }
     }
 
@@ -167,7 +167,7 @@ class BluetoothKChooseActivity : AppCompatActivity(), IUtilK {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            StackMonitor.instance.popAllActivity()
+            StackKMonitor.instance.popAllActivity()
             return true
         }
         return super.onOptionsItemSelected(item)

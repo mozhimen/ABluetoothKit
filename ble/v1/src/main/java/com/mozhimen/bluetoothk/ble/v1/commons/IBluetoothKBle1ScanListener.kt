@@ -1,6 +1,6 @@
-package com.mozhimen.bluetoothk.ble.androidx.commons
+package com.mozhimen.bluetoothk.ble.v1.commons
 
-import androidx.bluetooth.ScanResult
+import android.bluetooth.BluetoothDevice
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
 
 
@@ -11,4 +11,4 @@ import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
  * @Date 2025/3/26 20:49
  * @Version 1.0
  */
-interface IBluetoothKBleXScanListener:IBluetoothKScanListener<ScanResult,ScanResult,ScanResult>
+interface IBluetoothKBle1ScanListener:IBluetoothKScanListener<BluetoothDevice,BluetoothDevice,BluetoothDevice>

@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble.test
+package com.mozhimen.bluetoothk.ble.v1.test
 
 import com.mozhimen.basick.impls.MutableLiveDataStrict
 import com.mozhimen.kotlin.elemk.androidx.lifecycle.bases.BaseViewModel
@@ -10,6 +10,6 @@ import com.mozhimen.kotlin.elemk.androidx.lifecycle.bases.BaseViewModel
  * @Date 2025/3/12
  * @Version 1.0
  */
-class ClientViewModel : BaseViewModel() {
+class ServerViewModel : BaseViewModel() {
     val liveData = MutableLiveDataStrict("")
 }

@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.mozhimen.bluetoothk.classic.BluetoothKClassic
-import com.mozhimen.bluetoothk.classic.BluetoothKClassicScanProxy
-import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
+import com.mozhimen.bluetoothk.classic.impls.BluetoothKClassicScanProxy
 import com.mozhimen.bluetoothk.test.databinding.ActivityBluetoothBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle

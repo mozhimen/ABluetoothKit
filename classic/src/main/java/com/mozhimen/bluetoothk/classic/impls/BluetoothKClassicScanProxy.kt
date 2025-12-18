@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.classic
+package com.mozhimen.bluetoothk.classic.impls
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -12,6 +12,7 @@ import com.mozhimen.basick.utils.requireContext
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
+import com.mozhimen.bluetoothk.classic.BluetoothKClassic
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle

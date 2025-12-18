@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble.v2
+package com.mozhimen.bluetoothk.ble.v2.impls
 
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -11,6 +11,7 @@ import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.ble.v2.commons.IBluetoothKBle2ScanListener
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
+import com.mozhimen.bluetoothk.ble.v2.BluetoothKBle2
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
@@ -30,12 +31,12 @@ import kotlin.properties.Delegates
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
 class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice> {
-    private var _bluetoothKBleScanListener: IBluetoothKBle2ScanListener? = null
+    private var _bluetoothKBle2ScanListener: IBluetoothKBle2ScanListener? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
         if (newValue)
-            _bluetoothKBleScanListener?.onStart()
+            _bluetoothKBle2ScanListener?.onStart()
         else
-            _bluetoothKBleScanListener?.onStop()
+            _bluetoothKBle2ScanListener?.onStop()
     }
 
     private val _scanCallback: ScanCallback = object : ScanCallback() {
@@ -46,7 +47,7 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
                 val address = device.address
                 val rssi = result.rssi
                 UtilKLogWrapper.d(TAG, "onScanResult: name名称:$name address地址:$address rssi信号强度:$rssi") // result.getScanRecord() 获取BLE广播数据
-                _bluetoothKBleScanListener?.onFound(result)
+                _bluetoothKBle2ScanListener?.onFound(result)
                 // 在此处处理扫描到的设备信息，如添加到列表、更新UI等
             }
         }
@@ -75,8 +76,8 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
         _scanSettings = scanSettings
     }
 
-    fun setBluetoothKBleScanListener(listener: IBluetoothKBle2ScanListener) {
-        _bluetoothKBleScanListener = listener
+    fun setBluetoothKBle2ScanListener(listener: Any) {
+        _bluetoothKBle2ScanListener = listener
     }
 
     @OptIn(OApiInit_InApplication::class)
@@ -126,7 +127,7 @@ class BluetoothKBle2ScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
     override fun onDestroy(owner: LifecycleOwner) {
         cancelBound()
         cancelScan()
-        _bluetoothKBleScanListener = null
+        _bluetoothKBle2ScanListener = null
         super.onDestroy(owner)
     }
 }

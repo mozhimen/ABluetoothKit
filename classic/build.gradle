@@ -37,6 +37,7 @@ dependencies {
         api project(':ABluetoothKit:basic')
     }
     implementation project(':ASwiftKit:basick')
+    implementation project(':KUtilKit:android')
     implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')
     implementation project(':ANavigateKit:start')
 

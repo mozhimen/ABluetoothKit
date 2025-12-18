@@ -9,22 +9,22 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context="com.mozhimen.bluetoothk.ble2.test.test.MainActivity">
 
-        <Button
-            android:id="@+id/main_btn_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="startServer"
-            android:text="Server"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <Button-->
+<!--            android:id="@+id/main_btn_server"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:onClick="startServer"-->
+<!--            android:text="Server"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <Button
-            android:id="@+id/main_btn_client"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="startClient"
-            android:text="Client"
-            app:layout_constraintTop_toBottomOf="@id/main_btn_server" />
+<!--        <Button-->
+<!--            android:id="@+id/main_btn_client"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:onClick="startClient"-->
+<!--            android:text="Client"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/main_btn_server" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

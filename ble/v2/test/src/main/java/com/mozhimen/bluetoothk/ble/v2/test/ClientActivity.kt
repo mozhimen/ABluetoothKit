@@ -1,8 +1,9 @@
-package com.mozhimen.bluetoothk.ble2.test
+package com.mozhimen.bluetoothk.ble2.test.test
 
 import android.content.Intent
 import android.os.Bundle
 import com.mozhimen.bluetoothk.ble.v1.impls.BluetoothKBle1ClientProxy
+import com.mozhimen.bluetoothk.ble.v2.test.BluetoothActivity
 import com.mozhimen.bluetoothk.ble2.test.databinding.ActivityClientBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -27,9 +28,9 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
     override fun initView(savedInstanceState: Bundle?) {
         _bluetoothKBle1ClientProxy.apply {
             bindLifecycle(this@ClientActivity)
-            setListener {
-                vm.liveData.postValue(it)
-            }
+//            setListener {
+//                vm.liveData.postValue(it)
+//            }
         }
         vdb.clientBtnConnect.setOnClickListener {
             startActivityForResult<BluetoothActivity>(REQUEST_CODE_BLUETOOTH)

@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ABluetoothKit">
         <activity
-            android:name="com.mozhimen.bluetoothk.ble2.test.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,9 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.mozhimen.bluetoothk.ble2.test.ClientActivity" />
-        <activity android:name="com.mozhimen.bluetoothk.ble2.test.ServerActivity" />
-        <activity android:name="com.mozhimen.bluetoothk.ble2.test.BluetoothActivity" />
+        <activity android:name=".ClientActivity" />
+        <activity android:name=".ServerActivity" />
+        <activity android:name=".BluetoothActivity" />
     </application>
 
 </manifest>

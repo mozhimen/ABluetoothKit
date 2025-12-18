@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble2.test
+package com.mozhimen.bluetoothk.ble.v2.test
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -11,9 +11,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
-import com.mozhimen.bluetoothk.ble.BluetoothKBle2
-import com.mozhimen.bluetoothk.ble.BluetoothKBle2ScanProxy
-import com.mozhimen.bluetoothk.ble2.test.databinding.ActivityBluetoothBinding
+import com.mozhimen.bluetoothk.ble.v2.BluetoothKBle2
+import com.mozhimen.bluetoothk.ble.v2.commons.IBluetoothKBle2ScanListener
+import com.mozhimen.bluetoothk.ble.v2.impls.BluetoothKBle2ScanProxy
+import com.mozhimen.bluetoothk.ble.v2.test.databinding.ActivityBluetoothBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
@@ -92,7 +93,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
                 })
                 finish()
             } else {
-                _bluetoothKBle2ScanProxy.startBound(_bluetoothDevices[position])
+                _bluetoothKBle2ScanProxy.startBound(this,_bluetoothDevices[position])
             }
         })
         vdb.swipeRefresh.setColorSchemeResources(R.color.black)
@@ -104,21 +105,21 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKBle2ScanProxy.apply {
-            setBluetoothKScanListener(object : IBluetoothKBleScanListener {
+            setBluetoothKBle2ScanListener(object : IBluetoothKBle2ScanListener {
                 @SuppressLint("NotifyDataSetChanged")
-                override fun onFound(scanResult: ScanResult) {
-                    UtilKLogWrapper.d(TAG, "onFound: ${scanResult.device.address}")
-                    if (_bluetoothDevices.containsBy { it.address == scanResult.device.address })
+                override fun onFound(obj: ScanResult) {
+                    UtilKLogWrapper.d(TAG, "onFound: ${obj.device.address}")
+                    if (_bluetoothDevices.containsBy { it.address == obj.device.address })
                         return
-                    _bluetoothDevices.add(scanResult.device)
+                    _bluetoothDevices.add(obj.device)
                     _baseQuickAdapter.notifyDataSetChanged()
                     if (vdb.swipeRefresh.isRefreshing)
                         vdb.swipeRefresh.isRefreshing = false
                 }
 
-                override fun onBonded(bluetoothDevice: BluetoothDevice) {
+                override fun onBonded(obj: BluetoothDevice) {
                     setResult(CActivity.RESULT_OK, Intent().apply {
-                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice.address)
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, obj.address)
                     })
                     finish()
                 }

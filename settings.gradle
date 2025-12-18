@@ -54,6 +54,7 @@ project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
 include ':AStackKit:stackk'
 include ':AStackKit:callback'
 include ':AStackKit:basic'
+include ':AStackKit:monitor'
 //APermissionKit_XXPermissions
 include ':APermissionKit_XXPermissions'
 project(':APermissionKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\APermissionKit_XXPermissions")

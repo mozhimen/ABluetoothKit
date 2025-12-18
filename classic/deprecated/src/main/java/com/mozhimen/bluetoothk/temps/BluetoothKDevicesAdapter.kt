@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.mozhimen.basick.stackk.monitor.StackMonitor
 import com.mozhimen.bluetoothk.BluetoothK
 import com.mozhimen.bluetoothk.R
 import com.mozhimen.bluetoothk.cons.CBluetoothKCons
+import com.mozhimen.stackk.monitor.StackKMonitor
 
 /**
  * @ClassName BluetoothKDevicesAdapter
@@ -87,7 +87,7 @@ class BluetoothKDevicesAdapter(
                 val mac = s.substring(s.lastIndexOf("\n") + 1)
                 val name = s.substring(0, s.lastIndexOf("\n"))
                 BluetoothK.instance.executeMacCallback(name, mac, _key)
-                StackMonitor.instance.popAllActivity()
+                StackKMonitor.instance.popAllActivity()
             }
         }
     }

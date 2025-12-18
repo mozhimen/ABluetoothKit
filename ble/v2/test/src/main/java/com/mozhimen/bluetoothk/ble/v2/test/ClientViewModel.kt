@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble2.test
+package com.mozhimen.bluetoothk.ble2.test.test
 
 import com.mozhimen.basick.impls.MutableLiveDataStrict
 import com.mozhimen.kotlin.elemk.androidx.lifecycle.bases.BaseViewModel

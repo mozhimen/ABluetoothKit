@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.mozhimen.basick.elemk.android.app.cons.CActivity
-import com.mozhimen.basick.elemk.android.bluetooth.cons.CBluetoothAdapter
-import com.mozhimen.basick.stackk.monitor.StackMonitor
-import com.mozhimen.basick.utilk.android.content.startContext
-import com.mozhimen.basick.utilk.android.widget.showToast
 import com.mozhimen.bluetoothk.cons.CBluetoothKCons
+import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
+import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
+import com.mozhimen.kotlin.utilk.android.content.startContext
+import com.mozhimen.kotlin.utilk.android.widget.showToast
+import com.mozhimen.stackk.monitor.StackKMonitor
 
 /**
  * @ClassName BluetoothKOpenActivity
@@ -28,7 +28,7 @@ class BluetoothKOpenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        StackMonitor.instance.pushActivity(this)
+        StackKMonitor.instance.pushActivity(this)
         startActivityForResult(
             Intent(CBluetoothAdapter.ACTION_REQUEST_ENABLE),
             CBluetoothKCons.REQUEST_CODE_OPEN_BT
@@ -50,7 +50,7 @@ class BluetoothKOpenActivity : AppCompatActivity() {
                 } else {
                     "用户取消打开蓝牙".showToast()
                 }
-                StackMonitor.instance.popActivity(this)
+                StackKMonitor.instance.popActivity(this)
             }
         }
     }

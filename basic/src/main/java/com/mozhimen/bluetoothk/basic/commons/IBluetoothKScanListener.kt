@@ -8,7 +8,7 @@ package com.mozhimen.bluetoothk.basic.commons
  * @Date 2025/2/18
  * @Version 1.0
  */
-interface IBluetoothKScanListener<A> {
+interface IBluetoothKScanListener<A,B,C> {
     fun onStart(){}
     /**
      * 连接成功或失败后调用
@@ -17,8 +17,8 @@ interface IBluetoothKScanListener<A> {
      * @param e 错误
      */
     fun onFound(obj: A){}
-    fun onBonding(obj: A){}
-    fun onBonded(obj: A){}
+    fun onBonding(obj: B){}
+    fun onBonded(obj: C){}
 
     fun onStop(){}
 }
