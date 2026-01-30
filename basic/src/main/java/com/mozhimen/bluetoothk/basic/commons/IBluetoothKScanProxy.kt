@@ -10,10 +10,12 @@ import android.bluetooth.BluetoothDevice
  * @Date 2025/3/14
  * @Version 1.0
  */
-interface IBluetoothKScanProxy<A> {
+interface IBluetoothKScanProxy<BOUND,I> {
     fun startScan(activity: Activity)
     fun isScanning(): Boolean
     fun cancelScan()
-    fun startBound(activity: Activity, obj: A) {}
+    fun startBound(activity: Activity, obj: BOUND) {}
     fun cancelBound() {}
+
+    fun setBluetoothScanListener(listener: I)
 }

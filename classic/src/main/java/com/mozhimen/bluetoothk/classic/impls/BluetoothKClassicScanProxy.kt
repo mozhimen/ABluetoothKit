@@ -13,6 +13,7 @@ import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
 import com.mozhimen.bluetoothk.classic.BluetoothKClassic
+import com.mozhimen.bluetoothk.classic.commons.IBluetoothKClassicScanListener
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothAdapter
 import com.mozhimen.kotlin.elemk.android.bluetooth.cons.CBluetoothDevice
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -33,9 +34,9 @@ import java.util.concurrent.ConcurrentHashMap
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice> {
+open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<BluetoothDevice, IBluetoothKClassicScanListener> {
 
-    private var _bluetoothKScanListener: IBluetoothKScanListener<BluetoothDevice>? = null
+    private var _bluetoothKScanListener: IBluetoothKClassicScanListener? = null
     private var _bluetoothDevices: ConcurrentHashMap<String, BluetoothDevice> = ConcurrentHashMap<String, BluetoothDevice>()
 
     private val _broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -91,7 +92,7 @@ open class BluetoothKClassicScanProxy : BaseWakeBefDestroyLifecycleObserver(), I
 
     //////////////////////////////////////////////////////////////////////////
 
-    fun setBluetoothKScanListener(listener: IBluetoothKScanListener<BluetoothDevice>) {
+    override fun setBluetoothScanListener(listener: IBluetoothKClassicScanListener) {
         _bluetoothKScanListener = listener
     }
 

@@ -8,7 +8,7 @@ import androidx.bluetooth.GattClientScope
 import androidx.bluetooth.GattService
 import androidx.bluetooth.ScanResult
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
-import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKXClientListener
+import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXClientListener
 import com.mozhimen.kotlin.elemk.commons.IExt_AListener
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
@@ -25,7 +25,6 @@ import kotlinx.coroutines.withContext
 import java.util.LinkedList
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @ClassName BluetooKBleX
@@ -39,8 +38,8 @@ class BluetoothKBleX : IUtilK {
     private var _connectJobs: ConcurrentHashMap<String, Job> = ConcurrentHashMap<String, Job>()
     private var _gattClientScopes: ConcurrentHashMap<String, GattClientScope> = ConcurrentHashMap<String, GattClientScope>()
     private val _subscribeFlows: ConcurrentHashMap<String, Flow<ByteArray>?> = ConcurrentHashMap<String, Flow<ByteArray>?>()
-    private val _bluetoothKXClientListeners: ConcurrentHashMap<String, LinkedList<IBluetoothKXClientListener>> =
-        ConcurrentHashMap<String, LinkedList<IBluetoothKXClientListener>>()
+    private val _bluetoothKXClientListeners: ConcurrentHashMap<String, LinkedList<IBluetoothKBleXClientListener>> =
+        ConcurrentHashMap<String, LinkedList<IBluetoothKBleXClientListener>>()
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ class BluetoothKBleX : IUtilK {
     fun getSubscribeFlow(mac: String, uUIDService: String, uUIDCharacteristics: String): Flow<ByteArray>? =
         _subscribeFlows[mac + uUIDService + uUIDCharacteristics]
 
-    fun getIBluetoothKXClientListener(mac: String): LinkedList<IBluetoothKXClientListener>? =
+    fun getIBluetoothKXClientListener(mac: String): LinkedList<IBluetoothKBleXClientListener>? =
         _bluetoothKXClientListeners[mac]
 
     fun getScanResult(mac: String): ScanResult? =
@@ -84,7 +83,7 @@ class BluetoothKBleX : IUtilK {
 
     //////////////////////////////////////////////////////////////////////////
 
-    fun addIBluetoothKXClientListener(mac: String, listener: IBluetoothKXClientListener) {
+    fun addIBluetoothKXClientListener(mac: String, listener: IBluetoothKBleXClientListener) {
         var list = getIBluetoothKXClientListener(mac)
         if (list == null) {
             list = LinkedList()
@@ -112,10 +111,10 @@ class BluetoothKBleX : IUtilK {
         _subscribeFlows[mac + uUIDService + uUIDCharacteristics] = subscribeFlow
     }
 
-    fun removeIBluetoothKXClientListeners(mac: String): LinkedList<IBluetoothKXClientListener>? =
+    fun removeIBluetoothKXClientListeners(mac: String): LinkedList<IBluetoothKBleXClientListener>? =
         _bluetoothKXClientListeners.remove(mac)
 
-    fun removeIBluetoothKXClientListener(mac: String, listener: IBluetoothKXClientListener): Boolean? =
+    fun removeIBluetoothKXClientListener(mac: String, listener: IBluetoothKBleXClientListener): Boolean? =
         getIBluetoothKXClientListener(mac)?.remove(listener)
 
     fun removeScanResult(mac: String): ScanResult? =

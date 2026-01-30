@@ -44,23 +44,23 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
 
     private var _bluetoothDevices: MutableList<BluetoothDevice> = ArrayList()
     private var _baseQuickAdapter: BaseQuickAdapter<BluetoothDevice, VHKLifecycle2> = object : BaseQuickAdapter<BluetoothDevice, VHKLifecycle2>(_bluetoothDevices) {
-        @SuppressLint("MissingPermission")
+        @SuppressLint("MissingPermission", "SetTextI18n")
         override fun onBindViewHolder(holder: VHKLifecycle2, position: Int, item: BluetoothDevice?) {
             super.onBindViewHolder(holder, position, item)
             item ?: return
             item.name?.ifNotEmptyOr({
-                holder.findViewById<TextView>(android.R.id.text1).setText(it)
+                holder.findViewById<TextView>(android.R.id.text1).text = it
             }, {
-                holder.findViewById<TextView>(android.R.id.text1).setText("Null")
+                holder.findViewById<TextView>(android.R.id.text1).text = "Null"
             }) ?: kotlin.run {
-                holder.findViewById<TextView>(android.R.id.text1).setText("Null")
+                holder.findViewById<TextView>(android.R.id.text1).text = "Null"
             }
             item.address?.ifNotEmptyOr({
-                holder.findViewById<TextView>(android.R.id.text2).setText(item.address)
+                holder.findViewById<TextView>(android.R.id.text2).text = item.address
             }, {
-                holder.findViewById<TextView>(android.R.id.text2).setText("Null")
+                holder.findViewById<TextView>(android.R.id.text2).text = "Null"
             }) ?: kotlin.run {
-                holder.findViewById<TextView>(android.R.id.text2).setText("Null")
+                holder.findViewById<TextView>(android.R.id.text2).text = "Null"
             }
         }
 
@@ -86,16 +86,16 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
         vdb.recyHistory.setLayoutManager(LinearLayoutManager(this))
         vdb.recyHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         vdb.recyHistory.setAdapter(_baseQuickAdapter)
-        _baseQuickAdapter.setOnItemClickListener(BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
+        _baseQuickAdapter.setOnItemClickListener { _, _, position ->
             if (_bluetoothDevices[position].isBondState_BOND_BONDED()) {
                 setResult(CActivity.RESULT_OK, Intent().apply {
                     putExtra(EXTRA_BLUETOOTH_ADDRESS, _bluetoothDevices[position].address)
                 })
                 finish()
             } else {
-                _bluetoothKBle2ScanProxy.startBound(this,_bluetoothDevices[position])
+                _bluetoothKBle2ScanProxy.startBound(this, _bluetoothDevices[position])
             }
-        })
+        }
         vdb.swipeRefresh.setColorSchemeResources(R.color.black)
         vdb.swipeRefresh.setOnRefreshListener {
             startScan()
@@ -105,7 +105,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKBle2ScanProxy.apply {
-            setBluetoothKBle2ScanListener(object : IBluetoothKBle2ScanListener {
+            setBluetoothScanListener(object : IBluetoothKBle2ScanListener {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onFound(obj: ScanResult) {
                     UtilKLogWrapper.d(TAG, "onFound: ${obj.device.address}")

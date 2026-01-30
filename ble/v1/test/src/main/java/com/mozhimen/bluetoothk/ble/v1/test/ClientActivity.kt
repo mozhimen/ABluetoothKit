@@ -2,8 +2,8 @@ package com.mozhimen.bluetoothk.ble.v1.test
 
 import android.content.Intent
 import android.os.Bundle
-import com.mozhimen.bluetoothk.ble.v1.databinding.ActivityClientBinding
 import com.mozhimen.bluetoothk.ble.v1.impls.BluetoothKBle1ClientProxy
+import com.mozhimen.bluetoothk.ble.v1.test.databinding.ActivityClientBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle

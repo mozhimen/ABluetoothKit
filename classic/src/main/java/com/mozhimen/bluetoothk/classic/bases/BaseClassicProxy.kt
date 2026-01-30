@@ -3,6 +3,7 @@ package com.mozhimen.bluetoothk.classic.bases
 import android.app.Activity
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
+import com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy
 import com.mozhimen.bluetoothk.basic.utils.UtilBluetooth
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
@@ -20,7 +21,7 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-abstract class BaseClassicProxy : BaseWakeBefDestroyLifecycleObserver(), com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy<IA_Listener<String>> {
+abstract class BaseClassicProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IA_Listener<String>> {
     protected var _onReadListener: IA_Listener<String>? = null
     private var _thread: BaseClassicThread? = null
 

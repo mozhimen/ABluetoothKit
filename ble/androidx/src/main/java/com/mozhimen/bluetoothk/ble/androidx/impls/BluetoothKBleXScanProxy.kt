@@ -30,7 +30,7 @@ import kotlin.properties.Delegates
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<ScanResult> {
+class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKScanProxy<ScanResult,IBluetoothKBleXScanListener> {
     private var _scanJob: Job? = null
     private var _bluetoothKBleXScanListener: IBluetoothKBleXScanListener? = null
     private var _isScanning: Boolean by Delegates.observable(false) { property, oldValue, newValue ->
@@ -47,7 +47,7 @@ class BluetoothKBleXScanProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoot
         _scanFilters = scanFilters
     }
 
-    fun setBluetoothKBleXScanListener(listener: IBluetoothKBleXScanListener) {
+    override fun setBluetoothScanListener(listener: IBluetoothKBleXScanListener) {
         _bluetoothKBleXScanListener = listener
     }
 

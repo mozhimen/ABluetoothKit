@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation project(':ASwiftKit:uik:databinding')
     implementation project(':AXmlKit_BaseRecyclerViewAdapterHelper:library')
+    implementation project(':ASwiftKit:xmlk')
     implementation project(':AXmlKit:vhk')
     implementation project(':ble:v1')
 

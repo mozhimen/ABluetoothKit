@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import com.mozhimen.basick.utils.runOnLifecycleState
-import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKXClientListener
+import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXClientListener
 import com.mozhimen.bluetoothk.ble.androidx.impls.BluetoothKBleXClientProxy
 import com.mozhimen.bluetoothk.ble.androidx.test.databinding.ActivityClientBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
@@ -65,7 +65,7 @@ class ClientActivity : BaseActivityVDBVM<ActivityClientBinding, ClientViewModel>
                 vdb.clientTxtAddress.text = address
                 _bluetoothKBleXClientProxy.apply {
                     setMac(address)
-                    setListener(object :IBluetoothKXClientListener{
+                    setListener(object :IBluetoothKBleXClientListener{
                         override fun onReadGattCharacteristic(bytes: ByteArray) {
                             vm.flowSubscribeData.tryEmit(bytes)
                         }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.mozhimen.bluetoothk.classic.BluetoothKClassic
+import com.mozhimen.bluetoothk.classic.commons.IBluetoothKClassicScanListener
 import com.mozhimen.bluetoothk.classic.impls.BluetoothKClassicScanProxy
 import com.mozhimen.bluetoothk.test.databinding.ActivityBluetoothBinding
 import com.mozhimen.kotlin.elemk.android.app.cons.CActivity
@@ -42,7 +43,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
 
     private var _bluetoothDevices: MutableList<BluetoothDevice> = ArrayList()
     private var _baseQuickAdapter: BaseQuickAdapter<BluetoothDevice, VHKLifecycle2> = object : BaseQuickAdapter<BluetoothDevice, VHKLifecycle2>(_bluetoothDevices) {
-        @SuppressLint("MissingPermission")
+        @SuppressLint("MissingPermission", "SetTextI18n")
         override fun onBindViewHolder(holder: VHKLifecycle2, position: Int, item: BluetoothDevice?) {
             super.onBindViewHolder(holder, position, item)
             item ?: return
@@ -88,7 +89,7 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
         vdb.recyHistory.setLayoutManager(LinearLayoutManager(this))
         vdb.recyHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         vdb.recyHistory.setAdapter(_baseQuickAdapter)
-        _baseQuickAdapter.setOnItemClickListener(BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
+        _baseQuickAdapter.setOnItemClickListener(BaseQuickAdapter.OnItemClickListener { _, _, position ->
             if (_bluetoothDevices[position].isBondState_BOND_BONDED()) {
                 setResult(CActivity.RESULT_OK, Intent().apply {
                     putExtra(EXTRA_BLUETOOTH_ADDRESS, _bluetoothDevices[position].address)
@@ -107,21 +108,21 @@ class BluetoothActivity : BaseActivityVDB<ActivityBluetoothBinding>() {
     @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
     override fun initObserver() {
         _bluetoothKClassicScanProxy.apply {
-            setBluetoothKScanListener(object : com.mozhimen.bluetoothk.basic.commons.IBluetoothKScanListener<BluetoothDevice> {
+            setBluetoothScanListener(object : IBluetoothKClassicScanListener {
                 @SuppressLint("NotifyDataSetChanged")
-                override fun onFound(bluetoothDevice: BluetoothDevice) {
-                    UtilKLogWrapper.d(TAG, "onFound: ${bluetoothDevice.address}")
-                    if (_bluetoothDevices.containsBy { it.address == bluetoothDevice.address })
+                override fun onFound(obj: BluetoothDevice) {
+                    UtilKLogWrapper.d(TAG, "onFound: ${obj.address}")
+                    if (_bluetoothDevices.containsBy { it.address == obj.address })
                         return
-                    _bluetoothDevices.add(bluetoothDevice)
+                    _bluetoothDevices.add(obj)
                     _baseQuickAdapter.notifyDataSetChanged()
                     if (vdb.swipeRefresh.isRefreshing)
                         vdb.swipeRefresh.isRefreshing = false
                 }
 
-                override fun onBonded(bluetoothDevice: BluetoothDevice) {
+                override fun onBonded(obj: BluetoothDevice) {
                     setResult(CActivity.RESULT_OK, Intent().apply {
-                        putExtra(EXTRA_BLUETOOTH_ADDRESS, bluetoothDevice.address)
+                        putExtra(EXTRA_BLUETOOTH_ADDRESS, obj.address)
                     })
                     finish()
                 }

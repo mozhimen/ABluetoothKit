@@ -7,7 +7,7 @@ package com.mozhimen.bluetoothk.ble.androidx.commons
  * @Date 2025/4/6 3:50
  * @Version 1.0
  */
-interface IBluetoothKXClientListener {
+interface IBluetoothKBleXClientListener {
     fun onDisConnected() {}
     fun onConnecting() {}
     fun onConnected() {}

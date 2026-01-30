@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.bluetoothk.basic.commons.IBluetoothKProxy
 import com.mozhimen.bluetoothk.ble.androidx.BluetoothKBleX
-import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKXClientListener
+import com.mozhimen.bluetoothk.ble.androidx.commons.IBluetoothKBleXClientListener
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
@@ -21,9 +21,9 @@ import java.util.UUID
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 @OApiCall_BindViewLifecycle
-class BluetoothKBleXClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IBluetoothKXClientListener> {
+class BluetoothKBleXClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBluetoothKProxy<IBluetoothKBleXClientListener> {
     private var _mac: String = ""
-    private var _listener: IBluetoothKXClientListener? = null
+    private var _listener: IBluetoothKBleXClientListener? = null
 
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ class BluetoothKBleXClientProxy : BaseWakeBefDestroyLifecycleObserver(), IBlueto
     fun getMac(): String =
         _mac
 
-    override fun setListener(listener: IBluetoothKXClientListener) {
+    override fun setListener(listener: IBluetoothKBleXClientListener) {
         if (_mac.isNotEmpty()) {
             if (_listener!=null)
                 stop()

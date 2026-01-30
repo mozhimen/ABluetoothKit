@@ -1,4 +1,4 @@
-package com.mozhimen.bluetoothk.ble2.test.test
+package com.mozhimen.bluetoothk.ble.v2.test
 
 //class ServerActivity : BaseActivityVDBVM<ActivityServerBinding, ServerViewModel>() {
 //    @OptIn(OApiInit_ByLazy::class, OApiCall_BindLifecycle::class, OApiCall_BindViewLifecycle::class)
